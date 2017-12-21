@@ -33,3 +33,12 @@ java -jar aws-smtp-relay.jar
 ```
 
 **By default the SMTP run on port 10025**
+
+### Arguments
+```
+usage: aws-smtp-relay
+ -c,--configuration <arg>   AWS SES configuration to use
+ -h,--help                  Display this help
+ -p,--port <arg>            Port number to listen to
+ -r,--region <arg>          AWS region to use
+```
