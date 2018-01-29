@@ -51,8 +51,11 @@ public class AwsSmtpRelay implements SimpleMessageListener {
     }
 
     void run() throws UnknownHostException {
+
+        String bindAddress = cmd.hasOption("b") ? cmd.getOptionValue("b") : "127.0.0.1";
+
         SMTPServer smtpServer = new SMTPServer(new SimpleMessageListenerAdapter(this));
-        smtpServer.setBindAddress(InetAddress.getByName("127.0.0.1"));
+        smtpServer.setBindAddress(InetAddress.getByName(bindAddress));
         if (cmd.hasOption("p")) {
             smtpServer.setPort(Integer.parseInt(cmd.getOptionValue("p")));
         } else {
@@ -64,6 +67,7 @@ public class AwsSmtpRelay implements SimpleMessageListener {
     public static void main(String[] args) throws UnknownHostException {
         Options options = new Options();
         options.addOption("p", "port", true, "Port number to listen to");
+        options.addOption("b", "bindAddress", true, "bind address");
         options.addOption("r", "region", true, "AWS region to use");
         options.addOption("c","configuration", true, "AWS SES configuration to use");
         options.addOption("h","help", false, "Display this help");
