@@ -67,7 +67,7 @@ public class AwsSmtpRelay implements SimpleMessageListener {
     public static void main(String[] args) throws UnknownHostException {
         Options options = new Options();
         options.addOption("p", "port", true, "Port number to listen to");
-        options.addOption("b", "bindAddress", true, "bind address");
+        options.addOption("b", "bindAddress", true, "Address to listen to");
         options.addOption("r", "region", true, "AWS region to use");
         options.addOption("c","configuration", true, "AWS SES configuration to use");
         options.addOption("h","help", false, "Display this help");
