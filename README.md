@@ -37,6 +37,7 @@ java -jar aws-smtp-relay.jar
 ### Arguments
 ```
 usage: aws-smtp-relay
+ -b,--bindAddress <arg>     Address to listen to
  -c,--configuration <arg>   AWS SES configuration to use
  -h,--help                  Display this help
  -p,--port <arg>            Port number to listen to
