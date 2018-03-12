@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: smtp
+spec:
+  selector:
+    app: smtp
+  ports:
+  - protocol: TCP
+    port: 25
