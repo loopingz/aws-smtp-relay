@@ -43,3 +43,11 @@ usage: aws-smtp-relay
  -p,--port <arg>            Port number to listen to
  -r,--region <arg>          AWS region to use
 ```
+
+# Docker hub
+
+You have a Docker image available
+
+```
+docker run -p 10025:10025 loopingz/aws-smtp-relay
+```
