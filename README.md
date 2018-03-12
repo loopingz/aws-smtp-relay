@@ -51,3 +51,20 @@ You have a Docker image available
 ```
 docker run -p 10025:10025 loopingz/aws-smtp-relay
 ```
+
+# IAM Policy
+
+Use this IAM Policy JSON to allow sending emails.
+
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "ses:SendRawEmail",
+      "Resource": "*"
+    }
+  ]
+}
+```
