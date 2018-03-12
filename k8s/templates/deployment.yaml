@@ -1,0 +1,20 @@
+apiVersion: apps/v1beta2 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: smtp-deployment
+spec:
+  selector:
+    matchLabels:
+      app: smtp
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: smtp
+    spec:
+      containers:
+      - name: smtp
+        image: loopingz/aws-smtp-relay:latest
+        args: ["-b", "0.0.0.0", "--port", "25", "--region", "eu-west-1"]
+        ports:
+        - containerPort: 25
