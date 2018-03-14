@@ -1,4 +1,4 @@
-FROM java
+FROM openjdk:jre-alpine
 MAINTAINER Damien Metzler <dmetzler@nuxeo.com>
 MAINTAINER Remi Cattiau <remi@cattiau.com>
 MAINTAINER Morgan Christiansson <docker@mog.se>
