@@ -2,10 +2,13 @@ package com.loopingz;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.StandardCharsets;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Properties;
-import java.nio.ByteBuffer;
+import java.util.regex.Pattern;
 
 import org.apache.commons.cli.*;
 import org.subethamail.smtp.server.SMTPServer;
@@ -21,6 +24,7 @@ import com.amazonaws.regions.Regions;
 import org.apache.commons.io.IOUtils;
 
 public class AwsSmtpRelay implements SimpleMessageListener {
+    private static final Pattern fromPat = Pattern.compile("(?mi)^From:");
 
     private static CommandLine cmd;
 
@@ -39,9 +43,21 @@ public class AwsSmtpRelay implements SimpleMessageListener {
         } else {
             client = AmazonSimpleEmailServiceClientBuilder.standard().build();
         }
-        byte[] msg = IOUtils.toByteArray(inputStream);
+        byte[] msgRaw = IOUtils.toByteArray(inputStream);
+        String msgStr = new String(msgRaw);
+        ByteBuffer msg = ByteBuffer.wrap(msgRaw);
+
+        // Add From: header if missing
+        String headers = msgStr.substring(0, msgStr.indexOf("\r\n\r\n"));
+        if(!fromPat.matcher(headers).find()) {
+            CharBuffer cb = CharBuffer.wrap("From: <"+from+">\r\n");
+            ByteBuffer bb = ByteBuffer.allocate(cb.limit() + msg.limit());
+            bb.put(StandardCharsets.ISO_8859_1.encode(cb)).put(msg).flip();
+            msg = bb;
+        }
+
         RawMessage rawMessage =
-                new RawMessage(ByteBuffer.wrap(msg));
+                new RawMessage(msg);
         SendRawEmailRequest rawEmailRequest =
                 new SendRawEmailRequest(rawMessage);
         if (cmd.hasOption("c")) {
