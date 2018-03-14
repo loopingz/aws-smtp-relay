@@ -43,7 +43,8 @@ public class AwsSmtpRelay implements SimpleMessageListener {
         RawMessage rawMessage =
                 new RawMessage(ByteBuffer.wrap(msg));
         SendRawEmailRequest rawEmailRequest =
-                new SendRawEmailRequest(rawMessage);
+                new SendRawEmailRequest(rawMessage).withSource(from)
+                                                   .withDestinations(to);
         if (cmd.hasOption("c")) {
             rawEmailRequest = rawEmailRequest.withConfigurationSetName(cmd.getOptionValue("c"));
         }
