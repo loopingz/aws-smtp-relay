@@ -1,5 +1,5 @@
 # aws-smtp-relay
-![aws-smtp-relay Schema](https://raw.githubusercontent.com/loopingz/aws-smtp-relay/master/docs/aws-smtp-relay-logo.png)
+![logo](https://raw.githubusercontent.com/8llouch/aws-smtp-relay/master/docs/aws-smtp-relay-logo.png)
 
 Local SMTP server that convert SMTP message to AWS SES API Call to allow you to use **AWS Role Instance**.
 
