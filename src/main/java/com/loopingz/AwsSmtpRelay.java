@@ -4,21 +4,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Properties;
 import java.nio.ByteBuffer;
 
 import org.apache.commons.cli.*;
-import org.subethamail.smtp.server.SMTPServer;
-import org.subethamail.smtp.helper.SimpleMessageListenerAdapter;
+import org.apache.commons.io.IOUtils;
+import org.subethamail.smtp.RejectException;
 import org.subethamail.smtp.helper.SimpleMessageListener;
+import org.subethamail.smtp.helper.SimpleMessageListenerAdapter;
+import org.subethamail.smtp.server.SMTPServer;
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
-import com.amazonaws.services.simpleemail.model.SendRawEmailRequest;
+import com.amazonaws.services.simpleemail.model.AmazonSimpleEmailServiceException;
 import com.amazonaws.services.simpleemail.model.RawMessage;
-import com.amazonaws.regions.Regions;
-
-import org.apache.commons.io.IOUtils;
+import com.amazonaws.services.simpleemail.model.SendRawEmailRequest;
 
 public class AwsSmtpRelay implements SimpleMessageListener {
 
@@ -48,7 +47,11 @@ public class AwsSmtpRelay implements SimpleMessageListener {
         if (cmd.hasOption("c")) {
             rawEmailRequest = rawEmailRequest.withConfigurationSetName(cmd.getOptionValue("c"));
         }
-        client.sendRawEmail(rawEmailRequest);
+        try {
+            client.sendRawEmail(rawEmailRequest);
+        } catch (AmazonSimpleEmailServiceException e) {
+            throw new RejectException(e.getMessage());
+        }
     }
 
     void run() throws UnknownHostException {
@@ -78,7 +81,7 @@ public class AwsSmtpRelay implements SimpleMessageListener {
             if (cmd.hasOption("h")) {
                 HelpFormatter formatter = new HelpFormatter();
                 // Should display version here
-                formatter.printHelp( "aws-smtp-relay", options );
+                formatter.printHelp("aws-smtp-relay", options);
                 return;
             }
             AwsSmtpRelay server = new AwsSmtpRelay();
