@@ -8,6 +8,8 @@ import java.nio.ByteBuffer;
 
 import org.apache.commons.cli.*;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.subethamail.smtp.RejectException;
 import org.subethamail.smtp.helper.SimpleMessageListener;
 import org.subethamail.smtp.helper.SimpleMessageListenerAdapter;
@@ -20,6 +22,8 @@ import com.amazonaws.services.simpleemail.model.RawMessage;
 import com.amazonaws.services.simpleemail.model.SendRawEmailRequest;
 
 public class AwsSmtpRelay implements SimpleMessageListener {
+
+    private final static Logger log = LoggerFactory.getLogger(SMTPServer.class);
 
     private static CommandLine cmd;
 
@@ -50,6 +54,7 @@ public class AwsSmtpRelay implements SimpleMessageListener {
         try {
             client.sendRawEmail(rawEmailRequest);
         } catch (AmazonSimpleEmailServiceException e) {
+            log.error(String.format("Error when trying to deliver mail to %s: %s", to, e.getMessage()));
             throw new RejectException(e.getMessage());
         }
     }
