@@ -62,28 +62,34 @@
             <version>1.4</version>
         </dependency>
         <dependency>
-           <groupId>org.slf4j</groupId>
-           <artifactId>slf4j-api</artifactId>
-           <version>1.7.25</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
        </dependency>
        <dependency>
-           <groupId>org.slf4j</groupId>
-           <artifactId>slf4j-simple</artifactId>
-           <version>1.7.25</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.25</version>
        </dependency>
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
-                      <id>default</id>
-                      <phase>package</phase>
-                      <goals>
-                        <goal>single</goal>
-                      </goals>
+                        <id>default</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
                     </execution>
                 </executions>
                 <configuration>
@@ -105,10 +111,47 @@
                 <repository>nuxeo/aws-smtp-relay</repository>
                 <tag>${project.version}</tag>
                 <buildArgs>
-                  <JAR_FILE>target/${project.build.finalName}-jar-with-dependencies.jar</JAR_FILE>
+                  <JAR_FILE>${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar</JAR_FILE>
                   <IMAGE_VERSION>${project.version}</IMAGE_VERSION>
                 </buildArgs>
               </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>jdeb</artifactId>
+                <groupId>org.vafer</groupId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jdeb</goal>
+                        </goals>
+                        <configuration>
+                            <dataSet>
+                                <data>
+                                    <src>${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/usr/share/aws-smtp-relay</prefix>
+                                        <user>aws-smtp-relay</user>
+                                        <group>aws-smtp-relay</group>
+                                    </mapper>
+                                </data>
+
+                                <data>
+                                    <src>${project.build.outputDirectory}/aws-smtp-relay.service</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/usr/lib/systemd/system</prefix>
+                                    </mapper>
+                                </data>
+
+                            </dataSet>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
