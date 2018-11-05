@@ -1,0 +1,14 @@
+# /usr/lib/systemd/system/tor.service
+[Unit]
+Description=AWS SMTP Relay
+After=network.target
+
+[Service]
+User=aws-smtp-relay
+Type=simple
+ExecStart=/usr/bin/java -jar /usr/share/aws-smtp-relay/aws-smtp-relay-${project.version}-jar-with-dependencies.jar -b 0.0.0.0
+ExecReload=/usr/bin/kill -HUP $MAINPID
+KillSignal=SIGINT
+
+[Install]
+WantedBy=multi-user.target
