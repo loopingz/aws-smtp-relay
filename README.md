@@ -40,6 +40,7 @@ java -jar aws-smtp-relay.jar
 usage: aws-smtp-relay
  -b,--bindAddress <arg>     Address to listen to
  -c,--configuration <arg>   AWS SES configuration to use
+ -a,--sourceArn <arg>       AWS ARN of the sending authorization policy
  -h,--help                  Display this help
  -p,--port <arg>            Port number to listen to
  -r,--region <arg>          AWS region to use
