@@ -1,4 +1,4 @@
-# /usr/lib/systemd/system/tor.service
+# /usr/lib/systemd/system/aws-smtp-relay.service
 [Unit]
 Description=AWS SMTP Relay
 After=network.target
@@ -6,9 +6,9 @@ After=network.target
 [Service]
 User=aws-smtp-relay
 Type=simple
-ExecStart=/usr/bin/java -jar /usr/share/aws-smtp-relay/aws-smtp-relay-${project.version}-jar-with-dependencies.jar -b 0.0.0.0
+ExecStart=/usr/bin/java -jar /usr/share/aws-smtp-relay/aws-smtp-relay-${project.version}-jar-with-dependencies.jar -b 127.0.0.1
 ExecReload=/usr/bin/kill -HUP $MAINPID
-KillSignal=SIGINT
+SuccessExitStatus=130 143
 
 [Install]
 WantedBy=multi-user.target

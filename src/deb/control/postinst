@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [[ `/sbin/init --version 2> /dev/null` =~ upstart ]]; then
+  ln -nsf /usr/share/aws-smtp-relay/aws-smtp-relay.sh /etc/init.d/aws-smtp-relay
+elif [[ `systemctl` =~ -\.mount ]]; then
+  ln -nsf /usr/share/aws-smtp-relay/aws-smtp-relay.service /etc/systemd/system/
+fi
