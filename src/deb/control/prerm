@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [[ `/sbin/init --version 2> /dev/null` =~ upstart ]]; then
+  service aws-smtp-relay stop
+elif [[ `systemctl` =~ -\.mount ]]; then
+  systemctl stop aws-smtp-relay
+fi

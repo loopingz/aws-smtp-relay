@@ -1,0 +1,3 @@
+#!/bin/bash
+
+rm -rf /etc/init.d/aws-smtp-relay /etc/systemd/system/aws-smtp-relay.service
