@@ -9,35 +9,73 @@
 # Description:       Mail relay to convert SMTP traffic to Amazon Simple Email Service API calls.
 ### END INIT INFO
 
-PIDFILE=/var/run/aws-smtp-relay.pid
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+NAME=aws-smtp-relay
+DESC="AWS SMTP Relay"
+CWD="/usr/share/$NAME"
+PIDFILE="/var/run/$NAME.pid"
+JAVA=/usr/bin/java
+JAR_PATH="$CWD/$NAME-${project.version}-jar-with-dependencies.jar"
+USER="$NAME"
+GROUP="$NAME"
+
+JAVA_OPTS=
+OPTS=
+
+# Read configuration variable file if it is present
+[ -r /etc/default/aws-smtp-relay ] && . /etc/default/aws-smtp-relay
+
+# Define LSB log_* functions.
+. /lib/lsb/init-functions
+
+if [ ! -x "$JAVA" ]; then
+  log_failure_msg "Java executable not found at $JAVA"
+  exit 2
+fi
 
 start() {
-  if [ -e $PIDFILE ]; then
-     echo "Found $PIDFILE - relay already running?"
-     ps -p `head -1 ${PIDFILE}` > /dev/null && exit 1 || echo "Relay process not found; starting..."
-  fi
+  log_daemon_msg "Starting $DESC" "$NAME"
 
-  java -jar /usr/share/aws-smtp-relay/aws-smtp-relay-${project.version}-jar-with-dependencies.jar -b 127.0.0.1 > /var/log/aws-smtp-relay.log 2>&1 &
-  echo $! > ${PIDFILE}
+  start-stop-daemon --start --quiet --make-pidfile --background \
+    --pidfile $PIDFILE \
+    --chuid $USER \
+    --user $USER \
+    --chdir $CWD \
+    --exec $JAVA \
+    -- $JAVA_OPTS -jar $JAR_PATH $OPTS
+
+  case "$?" in
+    0)
+      log_end_msg 0 ;;
+    1)
+      log_progress_msg "already started"
+      log_end_msg 0 ;;
+    *)
+      log_end_msg 1 ;;
+  esac
 }
 
 stop() {
-  if [ -e $PIDFILE ]; then
-    head -1 $PIDFILE | xargs kill
-    rm $PIDFILE
-  fi
+  log_daemon_msg "Stopping $DESC" "$NAME"
+
+  start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 \
+    --user $USER \
+    --pidfile $PIDFILE \
+    --exec $JAVA \
+
+  case "$?" in
+    0)
+      log_end_msg 0 ;;
+    1)
+      log_progress_msg "already stopped"
+      log_end_msg 0 ;;
+    *)
+      log_end_msg 1 ;;
+  esac
 }
 
 status() {
-  if [ -e $PIDFILE ]; then
-    PID=`head -1 $PIDFILE`
-  fi
-
-  if [[ "$PID" == "" ]]; then
-    echo "AWS SMTP relay is not running"
-  else
-    echo "AWS SMTP relay is running with PID $PID"
-  fi
+  status_of_proc -p $PIDFILE $JAVA "$NAME" && exit 0 || exit $?
 }
 
 case $1 in
