@@ -146,6 +146,12 @@
                                 </data>
 
                                 <data>
+                                    <src>${project.build.outputDirectory}/aws-smtp-relay.conf</src>
+                                    <dst>/etc/default/aws-smtp-relay</dst>
+                                    <type>file</type>
+                                </data>
+
+                                <data>
                                     <src>${project.build.outputDirectory}/aws-smtp-relay.sh</src>
                                     <dst>/usr/share/aws-smtp-relay/aws-smtp-relay.sh</dst>
                                     <type>file</type>
