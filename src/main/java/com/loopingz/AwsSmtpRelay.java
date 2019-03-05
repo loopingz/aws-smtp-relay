@@ -13,6 +13,7 @@ import org.subethamail.smtp.helper.SimpleMessageListener;
 import org.subethamail.smtp.helper.SimpleMessageListenerAdapter;
 import org.subethamail.smtp.server.SMTPServer;
 
+import com.amazonaws.AmazonServiceException.ErrorType;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 import com.amazonaws.services.simpleemail.model.AmazonSimpleEmailServiceException;
@@ -53,7 +54,12 @@ public class AwsSmtpRelay implements SimpleMessageListener {
         try {
             client.sendRawEmail(rawEmailRequest);
         } catch (AmazonSimpleEmailServiceException e) {
-            throw new RejectException(e.getMessage());
+            if(e.getErrorType() == ErrorType.Client) {
+                // If it's a client error, return a permanent error
+                throw new RejectException(e.getMessage());
+            } else {
+                throw new RejectException(451, e.getMessage());
+            }
         }
     }
 
