@@ -2,11 +2,8 @@ package com.loopingz;
 
 import com.amazonaws.util.StringUtils;
 
-import java.net.InetAddress;
-
 public class DeliveryDetails {
 
-    private static final int DEFAULT_PORT = 10025;
     private String bindAddress;
     private String port;
 
@@ -14,6 +11,9 @@ public class DeliveryDetails {
     private String configuration;
 
     private String sourceArn;
+    private String returnPathArn;
+
+	private String fromArn;
     private String smtpOverride;
     private String smtpHost;
     private String smtpPort;
@@ -22,7 +22,7 @@ public class DeliveryDetails {
 
     public String getBindAddress() {
         if (StringUtils.isNullOrEmpty(bindAddress)) {
-            return InetAddress.getLoopbackAddress().getHostAddress();
+            return  "127.0.0.1";
         }
         return bindAddress;
     }
@@ -32,8 +32,8 @@ public class DeliveryDetails {
     }
 
     public int getPort() {
-        if (StringUtils.isNullOrEmpty(port)) {
-            return DEFAULT_PORT;
+        if (StringUtils.isNullOrEmpty(port)){
+            return 10025;
         }
         return Integer.parseInt(port);
     }
@@ -84,8 +84,9 @@ public class DeliveryDetails {
 
     //if starts with t its true, else we don't override
     public boolean isSmtpOverride() {
-        return !StringUtils.isNullOrEmpty(smtpHost)
-                && StringUtils.beginsWithIgnoreCase(smtpOverride, "t");
+        return
+                !StringUtils.isNullOrEmpty(smtpHost) &&
+                StringUtils.beginsWithIgnoreCase(smtpOverride, "t");
     }
 
     public void setSmtpOverride(String smtpOverride) {
@@ -122,5 +123,29 @@ public class DeliveryDetails {
 
     public void setSmtpPassword(String smtpPassword) {
         this.smtpPassword = smtpPassword;
+    }
+
+    public String getReturnPathArn() {
+		return returnPathArn;
+	}
+
+	public void setReturnPathArn(String returnPathArn) {
+		this.returnPathArn = returnPathArn;
+	}
+
+    public boolean hasReturnPathArn() {
+        return !StringUtils.isNullOrEmpty(returnPathArn);
+    }
+
+	public String getFromArn() {
+		return fromArn;
+	}
+
+	public void setFromArn(String fromArn) {
+		this.fromArn = fromArn;
+	}
+
+    public boolean hasFromArn() {
+        return !StringUtils.isNullOrEmpty(returnPathArn);
     }
 }

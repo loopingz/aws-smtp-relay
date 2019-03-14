@@ -13,6 +13,11 @@
         <dependency.skip>false</dependency.skip>
     </properties>
 
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -25,12 +30,7 @@
             <dependency>
                 <groupId>com.github.davidmoten</groupId>
                 <artifactId>subethasmtp</artifactId>
-                <version>4.0.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>2.9.10</version>
+                <version>4.0-RC8</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -39,10 +39,6 @@
         <dependency>
             <groupId>com.github.davidmoten</groupId>
             <artifactId>subethasmtp</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>

@@ -9,8 +9,8 @@ import java.nio.ByteBuffer;
 
 import org.apache.commons.cli.*;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.subethamail.smtp.RejectException;
+import org.subethamail.smtp.TooMuchDataException;
 import org.subethamail.smtp.helper.SimpleMessageListener;
 import org.subethamail.smtp.server.SMTPServer;
 
@@ -52,13 +52,19 @@ public class AwsSmtpRelay implements SimpleMessageListener {
         if (deliveryDetails.hasSourceArn()) {
             rawEmailRequest = rawEmailRequest.withSourceArn(deliveryDetails.getSourceArn());
         }
+        if (deliveryDetails.hasFromArn()) {
+            rawEmailRequest = rawEmailRequest.withFromArn(deliveryDetails.getFromArn());
+        }
+        if (deliveryDetails.hasReturnPathArn()) {
+            rawEmailRequest = rawEmailRequest.withReturnPathArn(deliveryDetails.getReturnPathArn());
+        }
         if (deliveryDetails.hasConfiguration()) {
             rawEmailRequest = rawEmailRequest.withConfigurationSetName(deliveryDetails.getConfiguration());
         }
         try {
             client.sendRawEmail(rawEmailRequest);
         } catch (AmazonSimpleEmailServiceException e) {
-            throw new IOException(e.getMessage(), e);
+            throw new IOException(e.getMessage());
         }
     }
 
@@ -86,6 +92,12 @@ public class AwsSmtpRelay implements SimpleMessageListener {
         }
         if (cmd.hasOption("c")) {
             deliveryDetails.setConfiguration(cmd.getOptionValue("c"));
+        }
+        if (cmd.hasOption("f")) {
+        	deliveryDetails.setFromArn(cmd.getOptionValue("f"));
+        }
+        if (cmd.hasOption("t")) {
+        	deliveryDetails.setReturnPathArn(cmd.getOptionValue("t"));
         }
         if (cmd.hasOption("smtpO")) {
             deliveryDetails.setSmtpOverride(cmd.getOptionValue("smtpO"));
@@ -115,13 +127,16 @@ public class AwsSmtpRelay implements SimpleMessageListener {
         options.addOption("b", "bindAddress", true, "Address to listen to");
         options.addOption("r", "region", true, "AWS region to use");
         options.addOption("c", "configuration", true, "AWS SES configuration to use");
-        options.addOption("a", "sourceArn", true, "AWS ARN of the sending authorization policy");
+        options.addOption("a", "sourceArn", true, "AWS Source ARN of the sending authorization policy");
+        options.addOption("f", "fromArn", true, "AWS From ARN of the sending authorization policy");
+        options.addOption("t", "returnPathArn", true, "AWS Return Path ARN of the sending authorization policy");
+
 
         options.addOption("smtpO", "smtpOverride", true, "Not use SES but set SMTP variables true/false");
         options.addOption("smtpH", "smtpHost", true, "SMTP variable Host");
         options.addOption("smtpP", "smtpPort", true, "SMTP variable Port");
         options.addOption("smtpU", "smtpUsername", true, "SMTP variable Username");
-        options.addOption("smtpPW", "smtpPassword", true, "SMTP variable password");
+        options.addOption("smtpW", "smtpPassword", true, "SMTP variable password");
 
         options.addOption("h", "help", false, "Display this help");
         try {
@@ -136,7 +151,7 @@ public class AwsSmtpRelay implements SimpleMessageListener {
 
             getCmdConfig();
             //get configuration
-            if (cmd.hasOption("ssm")) {
+            if (cmd.hasOption("ssm") ){
                 deliveryDetails = new SsmConfigCollection(cmd, deliveryDetails).getConfig();
             }
 
