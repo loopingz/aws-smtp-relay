@@ -2,19 +2,18 @@ package com.loopingz;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 import org.apache.commons.cli.*;
 import org.apache.commons.io.IOUtils;
-import org.subethamail.smtp.RejectException;
-import org.subethamail.smtp.TooMuchDataException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.subethamail.smtp.helper.SimpleMessageListener;
-import org.subethamail.smtp.helper.SimpleMessageListenerAdapter;
 import org.subethamail.smtp.server.SMTPServer;
 
-import com.amazonaws.AmazonServiceException.ErrorType;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 import com.amazonaws.services.simpleemail.model.AmazonSimpleEmailServiceException;
@@ -23,17 +22,20 @@ import com.amazonaws.services.simpleemail.model.SendRawEmailRequest;
 
 public class AwsSmtpRelay implements SimpleMessageListener {
 
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
     private static CommandLine cmd;
     private static DeliveryDetails deliveryDetails = new DeliveryDetails();
 
     AwsSmtpRelay() {
-
     }
 
+    @Override
     public boolean accept(String from, String to) {
         return true;
     }
 
+    @Override
     public void deliver(String from, String to, InputStream inputStream) throws IOException {
         AmazonSimpleEmailService client;
         if (deliveryDetails.hasRegion()) {
@@ -56,7 +58,7 @@ public class AwsSmtpRelay implements SimpleMessageListener {
         try {
             client.sendRawEmail(rawEmailRequest);
         } catch (AmazonSimpleEmailServiceException e) {
-            throw new IOException(e.getMessage());
+            throw new IOException(e.getMessage(), e);
         }
     }
 
@@ -115,7 +117,6 @@ public class AwsSmtpRelay implements SimpleMessageListener {
         options.addOption("c", "configuration", true, "AWS SES configuration to use");
         options.addOption("a", "sourceArn", true, "AWS ARN of the sending authorization policy");
 
-
         options.addOption("smtpO", "smtpOverride", true, "Not use SES but set SMTP variables true/false");
         options.addOption("smtpH", "smtpHost", true, "SMTP variable Host");
         options.addOption("smtpP", "smtpPort", true, "SMTP variable Port");
@@ -135,7 +136,7 @@ public class AwsSmtpRelay implements SimpleMessageListener {
 
             getCmdConfig();
             //get configuration
-            if (cmd.hasOption("ssm") ){
+            if (cmd.hasOption("ssm")) {
                 deliveryDetails = new SsmConfigCollection(cmd, deliveryDetails).getConfig();
             }
 
@@ -148,7 +149,7 @@ public class AwsSmtpRelay implements SimpleMessageListener {
                 server.run();
             }
         } catch (ParseException ex) {
-            System.err.println(ex.getMessage());
+            LOG.error(ex.getMessage(), ex);
         }
     }
 }

@@ -2,8 +2,11 @@ package com.loopingz;
 
 import com.amazonaws.util.StringUtils;
 
+import java.net.InetAddress;
+
 public class DeliveryDetails {
 
+    private static final int DEFAULT_PORT = 10025;
     private String bindAddress;
     private String port;
 
@@ -19,7 +22,7 @@ public class DeliveryDetails {
 
     public String getBindAddress() {
         if (StringUtils.isNullOrEmpty(bindAddress)) {
-            return  "127.0.0.1";
+            return InetAddress.getLoopbackAddress().getHostAddress();
         }
         return bindAddress;
     }
@@ -29,8 +32,8 @@ public class DeliveryDetails {
     }
 
     public int getPort() {
-        if (StringUtils.isNullOrEmpty(port)){
-            return 10025;
+        if (StringUtils.isNullOrEmpty(port)) {
+            return DEFAULT_PORT;
         }
         return Integer.parseInt(port);
     }
@@ -81,9 +84,8 @@ public class DeliveryDetails {
 
     //if starts with t its true, else we don't override
     public boolean isSmtpOverride() {
-        return
-                !StringUtils.isNullOrEmpty(smtpHost) &&
-                StringUtils.beginsWithIgnoreCase(smtpOverride, "t");
+        return !StringUtils.isNullOrEmpty(smtpHost)
+                && StringUtils.beginsWithIgnoreCase(smtpOverride, "t");
     }
 
     public void setSmtpOverride(String smtpOverride) {

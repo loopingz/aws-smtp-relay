@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.2.xsd">
+    <suppress>
+        <notes><![CDATA[
+   file name: jackson-databind-2.6.7.2.jar As its used for SSM read, its not used in the main email dynamic field
+   ]]></notes>
+        <gav regex="true">^com\.fasterxml\.jackson\.core:jackson-databind:.*$</gav>
+        <cpe>cpe:/a:fasterxml:jackson-databind</cpe>
+    </suppress>
+</suppressions>

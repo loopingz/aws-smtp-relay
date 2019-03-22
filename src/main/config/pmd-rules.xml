@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+
+<ruleset name="Custom Rules"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+    <description>
+        Custom rules
+    </description>
+
+    <rule ref="category/java/bestpractices.xml">
+        <!-- The PMD mistakes the AbstractViolationReporter::log() as a debug log. -->
+        <exclude name="GuardLogStatement"/>
+        <!-- We do not care about this minor overhead, we are not Android application and we do not
+         want to change visibility of methods. Package-private visibility should be avoid almost
+         always. -->
+        <exclude name="AccessorMethodGeneration"/>
+    </rule>
+
+    <rule ref="category/java/errorprone.xml">
+        <!-- Too many false positives. -->
+        <exclude name="DataflowAnomalyAnalysis"/>
+        <!-- It is not our goal for now to keep all Serializable, maybe in the future. -->
+        <exclude name="BeanMembersShouldSerialize"/>
+    </rule>
+
+    <rule ref="category/java/multithreading.xml"></rule>
+    <rule ref="category/java/security.xml"></rule>
+    <rule ref="category/java/performance.xml"></rule>
+
+</ruleset>
