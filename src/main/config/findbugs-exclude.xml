@@ -1,0 +1,26 @@
+<FindBugsFilter>
+    <Match>
+        <!-- We don't care that much about serialization -->
+        <!-- Replacing whitespace manually on every log invocation isn't feasible; maybe implement custom layout? -->
+        <Bug pattern="SE_NO_SERIALVERSIONID,SE_BAD_FIELD,CRLF_INJECTION_LOGS"/>
+    </Match>
+    <Match>
+        <!-- Some fb-contrib filters just aren't production-grade -->
+        <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS,EXS_EXCEPTION_SOFTENING_NO_CHECKED,WEM_WEAK_EXCEPTION_MESSAGING,OPM_OVERLY_PERMISSIVE_METHOD"/>
+    </Match>
+    <Match>
+        <!-- Mockito initialises fields through reflection -->
+        <!-- No need to micro-optimise test performance -->
+        <!-- Tests don't need security checks (eg encrypted sockets) -->
+        <Or>
+            <Class name="~..*Test$"/>
+        </Or>
+        <Bug category="PERFORMANCE,SECURITY" pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+    </Match>
+
+    <!-- Workaround for Cobertura generated classes -->
+    <Match>
+        <Field name="__cobertura_counters"/>
+    </Match>
+
+</FindBugsFilter>
