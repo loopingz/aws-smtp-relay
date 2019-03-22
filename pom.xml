@@ -10,6 +10,7 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <dependency.skip>false</dependency.skip>
     </properties>
 
     <dependencyManagement>
@@ -24,7 +25,7 @@
             <dependency>
                 <groupId>com.github.davidmoten</groupId>
                 <artifactId>subethasmtp</artifactId>
-                <version>4.0-RC8</version>
+                <version>4.0.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -79,14 +80,134 @@
         </resources>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <groupId>org.owasp</groupId><artifactId>dependency-check-maven</artifactId><version>5.0.0-M2</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <suppressionFile>${project.basedir}/src/main/config/owasp-dependency-checker-suppressions.xml</suppressionFile>
+                    <failBuildOnCVSS>4</failBuildOnCVSS>
+                    <skip>${dependency.skip}</skip>
+                    <bundleAuditAnalyzerEnabled>false</bundleAuditAnalyzerEnabled>
                 </configuration>
+                <executions>
+                    <execution>
+                        <phase>validate</phase> <!-- too late at prepare-package -->
+                        <goals><goal>check</goal></goals>
+                    </execution>
+                </executions>
             </plugin>
+            <plugin>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.0.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>6.19</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                    <configLocation>${project.basedir}/src/main/config/checkstyle_rules.xml</configLocation>
+                    <propertyExpansion>config.directory=${project.basedir}/src/main/config</propertyExpansion>
+                    <excludes>
+                        node_modules,src/main/webapp/WEB-INF/eligibility-checklist/node_modules,src/main/webapp/WEB-INF/eligibility-checklist/dist.tar.gz
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>validate</phase> <!-- too late at prepare-package -->
+                        <goals>
+                            <!--<goal>checkstyle</goal>--> <!-- can be checkstyle to not fail the build-->
+                            <goal>check</goal> <!-- make it die if not good -->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.10.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.sourceforge.pmd</groupId>
+                        <artifactId>pmd-core</artifactId>
+                        <version>6.7.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>net.sourceforge.pmd</groupId>
+                        <artifactId>pmd-java</artifactId>
+                        <version>6.7.0</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <includeTests>false</includeTests>
+                    <rulesets>
+                        <ruleset>/rulesets/java/basic.xml</ruleset>
+                        <ruleset>${project.basedir}/src/main/config/pmd-rules.xml</ruleset>
+                    </rulesets>
+                    <excludeRoots>
+                        <excludeRoot>${project.basedir}/target/generated-sources</excludeRoot>
+                    </excludeRoots>
+                    <printFailingErrors>true</printFailingErrors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>validate</phase> <!-- too late at prepare-package -->
+                        <goals>
+                            <!--<goal>pmd</goal>--> <!--can be pmd be check once we have time to fix all errors-->
+                            <goal>check</goal> <!-- make it die if not good -->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>3.0.4</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.google.code.findbugs</groupId>
+                        <artifactId>findbugs</artifactId>
+                        <version>3.0.1</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.google.code.findbugs</groupId>
+                        <artifactId>annotations</artifactId>
+                        <version>3.0.1</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <excludeFilterFile>${project.basedir}/src/main/config/findbugs-exclude.xml</excludeFilterFile>
+                    <effort>Max</effort>
+                    <threshold>High</threshold>
+                    <includeTests>true</includeTests>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.h3xstream.findsecbugs</groupId>
+                            <artifactId>findsecbugs-plugin</artifactId>
+                            <version>1.7.1</version>
+                        </plugin>
+                        <plugin>
+                            <groupId>com.mebigfatguy.fb-contrib</groupId>
+                            <artifactId>fb-contrib</artifactId>
+                            <version>7.4.2</version>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.mutabilitydetector</groupId>
+                            <artifactId>MutabilityDetector4FindBugs</artifactId>
+                            <version>0.9.1</version>
+                        </plugin>
+                    </plugins>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>validate</phase> <!-- too late at prepare-package -->
+                        <goals>
+                            <!--<goal>findbugs</goal>--> <!--can be findbugs to not fail the build-->
+                            <goal>check</goal> <!-- make it die if not good -->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
@@ -173,4 +294,14 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>quickrun</id> <!-- to disable pmd/findbugs/owasp check for quick runs mvn ${command} -Pquickrun -->
+            <properties>
+                <dependency.skip>true</dependency.skip>
+                <pmd.skip>true</pmd.skip>
+                <findbugs.skip>true</findbugs.skip>
+            </properties>
+        </profile>
+    </profiles>
 </project>
