@@ -9,8 +9,8 @@ import java.nio.ByteBuffer;
 
 import org.apache.commons.cli.*;
 import org.apache.commons.io.IOUtils;
-import org.subethamail.smtp.RejectException;
-import org.subethamail.smtp.TooMuchDataException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.subethamail.smtp.helper.SimpleMessageListener;
 import org.subethamail.smtp.server.SMTPServer;
 
@@ -64,7 +64,7 @@ public class AwsSmtpRelay implements SimpleMessageListener {
         try {
             client.sendRawEmail(rawEmailRequest);
         } catch (AmazonSimpleEmailServiceException e) {
-            throw new IOException(e.getMessage());
+            throw new IOException(e.getMessage(), e);
         }
     }
 
@@ -131,7 +131,6 @@ public class AwsSmtpRelay implements SimpleMessageListener {
         options.addOption("f", "fromArn", true, "AWS From ARN of the sending authorization policy");
         options.addOption("t", "returnPathArn", true, "AWS Return Path ARN of the sending authorization policy");
 
-
         options.addOption("smtpO", "smtpOverride", true, "Not use SES but set SMTP variables true/false");
         options.addOption("smtpH", "smtpHost", true, "SMTP variable Host");
         options.addOption("smtpP", "smtpPort", true, "SMTP variable Port");
@@ -151,7 +150,7 @@ public class AwsSmtpRelay implements SimpleMessageListener {
 
             getCmdConfig();
             //get configuration
-            if (cmd.hasOption("ssm") ){
+            if (cmd.hasOption("ssm")) {
                 deliveryDetails = new SsmConfigCollection(cmd, deliveryDetails).getConfig();
             }
 

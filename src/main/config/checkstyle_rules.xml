@@ -18,6 +18,9 @@
 
     <property name="fileExtensions" value="java, properties, xml"/>
 
+    <!-- Allow ignorance -->
+    <module name="SuppressionCommentFilter"/>
+
     <!-- Checks whether files end with a new line.                        -->
     <!-- See http://checkstyle.sf.net/config_misc.html#NewlineAtEndOfFile -->
     <module name="NewlineAtEndOfFile"/>
@@ -81,6 +84,7 @@
         <property name="message" value="@Transactional cannot be applied to private method"/>
     </module>
     <module name="TreeWalker">
+        <module name="FileContentsHolder"/>
         <!-- Checks for Naming Conventions.                  -->
         <!-- See http://checkstyle.sf.net/config_naming.html -->
         <module name="ConstantName"/>

@@ -16,6 +16,7 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <dependency.skip>false</dependency.skip>
     </properties>
 
     <dependencyManagement>
@@ -30,7 +31,7 @@
             <dependency>
                 <groupId>com.github.davidmoten</groupId>
                 <artifactId>subethasmtp</artifactId>
-                <version>4.0-RC8</version>
+                <version>4.0.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -85,7 +86,7 @@
         </resources>
         <plugins>
             <plugin>
-                <groupId>org.owasp</groupId><artifactId>dependency-check-maven</artifactId><version>5.2.2</version>
+                <groupId>org.owasp</groupId><artifactId>dependency-check-maven</artifactId><version>5.0.0-M2</version>
                 <configuration>
                     <suppressionFile>${project.basedir}/src/main/config/owasp-dependency-checker-suppressions.xml</suppressionFile>
                     <failBuildOnCVSS>4</failBuildOnCVSS>
@@ -106,7 +107,7 @@
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>8.18</version>
+                        <version>6.19</version>
                     </dependency>
                 </dependencies>
                 <configuration>
@@ -127,19 +128,20 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.12.0</version>
+                <version>3.10.0</version>
                 <dependencies>
                     <dependency>
                         <groupId>net.sourceforge.pmd</groupId>
                         <artifactId>pmd-core</artifactId>
-                        <version>6.18.0</version>
+                        <version>6.7.0</version>
                     </dependency>
                     <dependency>
                         <groupId>net.sourceforge.pmd</groupId>
                         <artifactId>pmd-java</artifactId>
-                        <version>6.18.0</version>
+                        <version>6.7.0</version>
                     </dependency>
                 </dependencies>
                 <configuration>
@@ -166,7 +168,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
-                <version>3.0.5</version>
+                <version>3.0.4</version>
                 <dependencies>
                     <dependency>
                         <groupId>com.google.code.findbugs</groupId>
@@ -188,12 +190,12 @@
                         <plugin>
                             <groupId>com.h3xstream.findsecbugs</groupId>
                             <artifactId>findsecbugs-plugin</artifactId>
-                            <version>1.9.0</version>
+                            <version>1.7.1</version>
                         </plugin>
                         <plugin>
                             <groupId>com.mebigfatguy.fb-contrib</groupId>
                             <artifactId>fb-contrib</artifactId>
-                            <version>7.4.6</version>
+                            <version>7.4.2</version>
                         </plugin>
                         <plugin>
                             <groupId>org.mutabilitydetector</groupId>

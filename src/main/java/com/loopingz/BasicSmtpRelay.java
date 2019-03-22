@@ -1,9 +1,7 @@
 package com.loopingz;
 
-
 import com.amazonaws.util.StringUtils;
 import org.subethamail.smtp.helper.SimpleMessageListener;
-import org.subethamail.smtp.helper.SimpleMessageListenerAdapter;
 import org.subethamail.smtp.server.SMTPServer;
 
 import javax.mail.*;
@@ -38,10 +36,12 @@ public class BasicSmtpRelay implements SimpleMessageListener {
         }
     }
 
+    @Override
     public boolean accept(String from, String to) {
         return true;
     }
 
+    @Override
     public void deliver(String from, String to, InputStream inputStream) throws IOException {
 
         try {
@@ -52,8 +52,8 @@ public class BasicSmtpRelay implements SimpleMessageListener {
             msg.setFrom(new InternetAddress(from));
 
             Transport.send(msg);
-        } catch (MessagingException ex){
-            throw new IOException(ex.getMessage());
+        } catch (MessagingException ex) {
+            throw new IOException(ex.getMessage(), ex);
         }
     }
 
@@ -61,6 +61,7 @@ public class BasicSmtpRelay implements SimpleMessageListener {
         if (authRequest) {
             return Session.getDefaultInstance(props,
                     new Authenticator() {
+                        @Override
                         protected PasswordAuthentication getPasswordAuthentication() {
                             return new PasswordAuthentication(deliveryDetails.getSmtpUsername(), deliveryDetails.getSmtpPassword());
                         }
@@ -77,6 +78,4 @@ public class BasicSmtpRelay implements SimpleMessageListener {
         SMTPServer smtpServer = builder.build();
         smtpServer.start();
     }
-
-
 }
