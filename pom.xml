@@ -39,7 +39,7 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-ses</artifactId>
-            <version>1.11.473</version>
+            <version>1.11.564</version>
         </dependency>
         <dependency>
             <groupId>com.sun.mail</groupId>
