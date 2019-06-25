@@ -4,6 +4,9 @@ deploy:
   provider: releases
   api_key:
     secure: j57R45JPplBNsaI7ei4oIKa8Sfv1aXEK/0hiwQXyUxwtK4hmuRjmBUQUXJVQNm8ZJXIFTdSHkJ2AvhPHDDYYuS6jV3iGfAPYETkPh+1VFwemXvWWQqoBRJgmQUBb/4wCWzsNlaquJuQ7nqw7skgTNMeyCbQUGNDK5kEbSpGjKfgN9Aw717en7EPNHeiPclsjbgVaQy/pyOBuAPEk7oW81+PEQj8TKIuIkn1YUAeEjPxJKNvLH8+z1F3R65o5W+ud8yYSXvYsO2buiwV6QEAvnfBob1QGt8QMZ1FcTFOQtgnCeARdxmP0gI0Dcj5NEQKhg3LsELxw5dhzHG55GzhDjTOCnLLA3L+eYFiuV60BRJ4ExntthxGxfLs/taqJoi8tXEktvDKm2xdoLeQH6d7oJ20vmMVp48klHPf8/nwLx2VUYIz5jmrVjeYwGtOal798VZNEqGV4sYNO+IVSGCawDlpxZ21HwUXGYPbFA5/D3BLLO+mAmXmwX5MIThybB8nn5bm2iCbR5OMg9lUc8mKsK4kvIc0bMZKcFtK0UXIchFxLAaYnIC75oGaDbDlde094dogR7Jk3TqPjgGNrAGm3d/emD6kLg76cBYRKeQYRatN89i6xa5Vq5+YwueGQXIcourVujkDU7v0to12NyCVigOEyYWSCILCZA2+x0Il7ECA=
-  file: target/aws-smtp-relay_*.(deb|jar)
+  file_glob: true
+  file:
+    - target/aws-smtp-relay_*.jar
+    - target/aws-smtp-relay_*.deb
   on:
     repo: loopingz/aws-smtp-relay
