@@ -82,6 +82,24 @@
         </resources>
         <plugins>
             <plugin>
+                <groupId>com.oracle.substratevm</groupId>
+                <artifactId>native-image-maven-plugin</artifactId>
+                <version>1.0.0-rc15</version>
+                 <executions>
+                    <execution>
+                        <goals>
+                            <goal>native-image</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>com.loopingz.AwsSmtpRelay</mainClass>
+                    <buildArgs>--static --no-fallback</buildArgs>
+                    <imageName>aws-smtp-relay</imageName>
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
