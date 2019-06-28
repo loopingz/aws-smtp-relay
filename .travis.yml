@@ -16,3 +16,4 @@ deploy:
     - target/aws-smtp-relay_*.deb
   on:
     repo: loopingz/aws-smtp-relay
+    tags: true
