@@ -1,5 +1,5 @@
 #!/bin/bash
-
+chmod +x /usr/bin/aws-smtp-relay
 if [[ `/sbin/init --version 2> /dev/null` =~ upstart ]]; then
   ln -nsf /usr/share/aws-smtp-relay/aws-smtp-relay.sh /etc/init.d/aws-smtp-relay
 elif [[ `systemctl` =~ -\.mount ]]; then
