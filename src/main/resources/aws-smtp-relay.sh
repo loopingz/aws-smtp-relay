@@ -14,12 +14,10 @@ NAME=aws-smtp-relay
 DESC="AWS SMTP Relay"
 CWD="/usr/share/$NAME"
 PIDFILE="/var/run/$NAME.pid"
-JAVA=/usr/bin/java
-JAR_PATH="$CWD/$NAME-${project.version}-jar-with-dependencies.jar"
+CMD=/usr/bin/aws-smtp-relay
 USER="$NAME"
 GROUP="$NAME"
 
-JAVA_OPTS=
 OPTS=
 
 # Read configuration variable file if it is present
@@ -27,11 +25,6 @@ OPTS=
 
 # Define LSB log_* functions.
 . /lib/lsb/init-functions
-
-if [ ! -x "$JAVA" ]; then
-  log_failure_msg "Java executable not found at $JAVA"
-  exit 2
-fi
 
 start() {
   log_daemon_msg "Starting $DESC" "$NAME"
@@ -41,8 +34,8 @@ start() {
     --chuid $USER \
     --user $USER \
     --chdir $CWD \
-    --exec $JAVA \
-    -- $JAVA_OPTS -jar $JAR_PATH $OPTS
+    --exec $CMD \
+    -- $OPTS
 
   case "$?" in
     0)
@@ -61,7 +54,7 @@ stop() {
   start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 \
     --user $USER \
     --pidfile $PIDFILE \
-    --exec $JAVA \
+    --exec $CMD \
 
   case "$?" in
     0)
@@ -75,7 +68,7 @@ stop() {
 }
 
 status() {
-  status_of_proc -p $PIDFILE $JAVA "$NAME" && exit 0 || exit $?
+  status_of_proc -p $PIDFILE $CMD "$NAME" && exit 0 || exit $?
 }
 
 case $1 in

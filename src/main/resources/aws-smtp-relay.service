@@ -7,7 +7,7 @@ After=network.target
 EnvironmentFile=/etc/default/aws-smtp-relay
 User=aws-smtp-relay
 Type=simple
-ExecStart=/usr/bin/java -jar /usr/share/aws-smtp-relay/aws-smtp-relay-${project.version}-jar-with-dependencies.jar $OPTS
+ExecStart=/usr/bin/aws-smtp-relay $OPTS
 ExecReload=/usr/bin/kill -HUP $MAINPID
 SuccessExitStatus=130 143
 
