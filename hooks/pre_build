@@ -5,3 +5,4 @@ docker run --privileged \
   -v /var/run/docker.sock:/var/run/docker.sock \
   --workdir /src \
   maven:alpine mvn package
+docker run -v `pwd`/target:/smtp -it oracle/graalvm-ce bash -c "cd /smtp && gu install native-image && native-image -jar /smtp/*-with-dependencies.jar --no-fallback --static aws-smtp-relay"

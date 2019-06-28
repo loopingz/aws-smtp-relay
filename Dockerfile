@@ -1,10 +1,10 @@
-FROM openjdk:jre-alpine
+FROM alpine
 MAINTAINER Damien Metzler <dmetzler@nuxeo.com>
 MAINTAINER Remi Cattiau <remi@cattiau.com>
 MAINTAINER Morgan Christiansson <docker@mog.se>
 
-ADD target/*-jar-with-dependencies.jar /usr/share/aws-smtp-relay/aws-smtp-relay.jar
+ADD target/aws-smtp-relay /usr/local/bin/aws-smtp-relay
 
-ENTRYPOINT ["/usr/bin/java", "-jar", "/usr/share/aws-smtp-relay/aws-smtp-relay.jar", "-b", "0.0.0.0"]
+ENTRYPOINT ["/usr/local/bin/aws-smtp-relay", "-b", "0.0.0.0"]
 
 EXPOSE 10025
