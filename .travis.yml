@@ -13,7 +13,7 @@ deploy:
   file_glob: true
   file:
     - target/aws-smtp-relay
-    - target/aws-smtp-relay_*.jar
+    - target/aws-smtp-relay*.jar
     - target/aws-smtp-relay_*.deb
   on:
     repo: loopingz/aws-smtp-relay
