@@ -48,6 +48,12 @@ public class AwsSmtpRelay implements SimpleMessageListener {
         if (cmd.hasOption("a")) {
             rawEmailRequest = rawEmailRequest.withSourceArn(cmd.getOptionValue("a"));
         }
+        if (cmd.hasOption("f")) {
+            rawEmailRequest = rawEmailRequest.withFromArn(cmd.getOptionValue("f"));
+        }
+        if (cmd.hasOption("t")) {
+            rawEmailRequest = rawEmailRequest.withReturnPathArn(cmd.getOptionValue("t"));
+        }
         if (cmd.hasOption("c")) {
             rawEmailRequest = rawEmailRequest.withConfigurationSetName(cmd.getOptionValue("c"));
         }
@@ -83,7 +89,9 @@ public class AwsSmtpRelay implements SimpleMessageListener {
         options.addOption("b", "bindAddress", true, "Address to listen to");
         options.addOption("r", "region", true, "AWS region to use");
         options.addOption("c", "configuration", true, "AWS SES configuration to use");
-        options.addOption("a", "sourceArn", true, "AWS ARN of the sending authorization policy");
+        options.addOption("a", "sourceArn", true, "AWS Source ARN of the sending authorization policy");
+        options.addOption("f", "fromArn", true, "AWS From ARN of the sending authorization policy");
+        options.addOption("t", "returnPathArn", true, "AWS Return Path ARN of the sending authorization policy");
         options.addOption("h", "help", false, "Display this help");
         try {
             CommandLineParser parser = new DefaultParser();
