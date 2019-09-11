@@ -97,17 +97,16 @@ public final class AwsSmtpRelay {
       getCmdConfig();
       // get configuration
       if (cmd.hasOption("ssm")) {
-        deliveryDetails = new SsmConfigCollection(cmd, deliveryDetails).getConfig();
-        // Launch a refresh rate
+        SsmConfigCollection collector = new SsmConfigCollection(cmd, deliveryDetails);
+        collector.updateConfig();
+        collector.run();
       }
 
       // select sender (ses or other)
       if (deliveryDetails.isSmtpOverride()) {
-        BasicSmtpRelay server = new BasicSmtpRelay(deliveryDetails);
-        server.run();
+        SmtpRelay.init(new BasicSmtpRelay(deliveryDetails));
       } else {
-        SesSmtpRelay server = new SesSmtpRelay(deliveryDetails);
-        server.run();
+        SmtpRelay.init(new SesSmtpRelay(deliveryDetails));
       }
     } catch (ParseException ex) {
       LOG.error(ex.getMessage(), ex);
