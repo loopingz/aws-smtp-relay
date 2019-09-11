@@ -1,6 +1,8 @@
 package com.loopingz;
 
 import java.lang.invoke.MethodHandles;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
@@ -20,17 +22,26 @@ public class SsmConfigCollection {
 
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private CommandLine cmd;
+  private String prefix = "/smtpRelay/";
   private DeliveryDetails deliveryDetails;
+  private Timer timer;
+  private int interval;
 
   public SsmConfigCollection(CommandLine cmd, DeliveryDetails deliveryDetails) {
-    this.cmd = cmd;
+    prefix = (cmd.hasOption("ssmP") ? cmd.getOptionValue("ssmP") : "/smtpRelay/");
     this.deliveryDetails = deliveryDetails;
+    timer = new Timer();
+    if (cmd.hasOption("ssmR")) {
+      this.interval = Integer.parseInt(cmd.getOptionValue("ssmR")) * 60 * 1000;
+    }
   }
 
-  public DeliveryDetails getConfig() {
-    String prefix = (cmd.hasOption("ssmP") ? cmd.getOptionValue("ssmP") : "/smtpRelay/");
+  public boolean updateConfig() {
+    return this.updateConfig(deliveryDetails);
+  }
 
+  public boolean updateConfig(DeliveryDetails deliveryDetails) {
+    boolean result = false;
     try {
       AWSCredentialsProvider credentials = InstanceProfileCredentialsProvider.getInstance();
       AWSSimpleSystemsManagement simpleSystemsManagementClient = AWSSimpleSystemsManagementClientBuilder.standard()
@@ -40,31 +51,69 @@ public class SsmConfigCollection {
       parameterRequest.withPath(prefix).withRecursive(true).setWithDecryption(true);
       GetParametersByPathResult parameterResult = simpleSystemsManagementClient.getParametersByPath(parameterRequest);
       LOG.trace("length is: " + parameterResult.getParameters().size());
+
       for (Parameter param : parameterResult.getParameters()) {
         String key = param.getName();
         String value = param.getValue();
         LOG.trace("key is: " + key + " value: " + value);
-        if (key.endsWith("/region")) {
+        if (key.endsWith("/region") && !value.equals(deliveryDetails.getRegion())) {
+          result = true;
           deliveryDetails.setRegion(value);
-        } else if (key.endsWith("/configuration")) {
+        } else if (key.endsWith("/configuration") && !value.equals(deliveryDetails.getConfiguration())) {
+          result = true;
           deliveryDetails.setConfiguration(value);
-        } else if (key.endsWith("/sourceArn")) {
+        } else if (key.endsWith("/sourceArn") && !value.equals(deliveryDetails.getSourceArn())) {
+          result = true;
           deliveryDetails.setSourceArn(value);
-        } else if (key.endsWith("/smtpOverride")) {
+        } else if (key.endsWith("/smtpOverride") && !value.equals(deliveryDetails.getSmtpOverride())) {
+          result = true;
           deliveryDetails.setSmtpOverride(value);
-        } else if (key.endsWith("/smtpHost")) {
+        } else if (key.endsWith("/smtpHost") && !value.equals(deliveryDetails.getSmtpHost())) {
+          result = true;
           deliveryDetails.setSmtpHost(value);
-        } else if (key.endsWith("/smtpPort")) {
+        } else if (key.endsWith("/smtpPort") && !value.equals(deliveryDetails.getSmtpPort())) {
+          result = true;
           deliveryDetails.setSmtpPort(value);
-        } else if (key.endsWith("/smtpUsername")) {
+        } else if (key.endsWith("/smtpUsername") && !value.equals(deliveryDetails.getSmtpUsername())) {
+          result = true;
           deliveryDetails.setSmtpUsername(value);
-        } else if (key.endsWith("/smtpPassword")) {
+        } else if (key.endsWith("/smtpPassword") && !value.equals(deliveryDetails.getSmtpPassword())) {
+          result = true;
           deliveryDetails.setSmtpPassword(value);
         }
       }
-    } catch (AWSSimpleSystemsManagementException e) {
+    } catch (
+
+    AWSSimpleSystemsManagementException e) {
       throw new RuntimeException("Failed to pass SSM arguments", e);
     }
-    return deliveryDetails;
+    return result;
+  }
+
+  public void run() {
+    if (interval <= 0) {
+      return;
+    }
+    // Should set timer
+    timer.scheduleAtFixedRate(new TimerTask() {
+      @Override
+      public void run() {
+        try {
+          if (updateConfig()) {
+            SmtpRelay.reload();
+          }
+        } catch (Exception e) {
+          LOG.error(e.getMessage());
+        }
+      }
+    }, interval, interval);
+  }
+
+  public String getPrefix() {
+    return prefix;
+  }
+
+  public void setPrefix(String prefix) {
+    this.prefix = prefix;
   }
 }
