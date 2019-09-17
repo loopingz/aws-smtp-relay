@@ -1,0 +1,59 @@
+version: 2
+jobs:
+  build:
+    
+    working_directory: ~/aws-smtp-relay # directory where steps will run
+
+    environment:
+      MAVEN_OPTS: -Xmx2000m
+
+    docker: #https://github.com/CircleCI-Public/circleci-dockerfiles
+      - image: circleci/openjdk:8-jdk-stretch # ...with this image as the primary container; this is where all `steps` will run
+
+    steps:
+
+      - checkout
+
+      - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed
+          # Read about caching dependencies: https://circleci.
+          key: aws-smtp-relay-{{ checksum "pom.xml" }}
+      
+      - run: mvn dependency:go-offline # gets the project dependencies
+      
+      - save_cache: # saves the project dependencies
+          paths:
+            - ~/.m2
+          key: aws-smtp-relay-{{ checksum "pom.xml" }}
+
+      - run:
+         name: Java version
+         command: java -version
+      - run:
+          name: mvn version
+          command: mvn -v
+      - run:
+          name: mvn test-compile
+          command: mvn test-compile # make sure we compile
+      - run:
+          name: mvn verify
+          command: mvn verify # run the actual tests
+      - run:
+          name: copy jar to simple name
+          command: cp target/aws-smtp-relay-*-jar-with-dependencies.jar aws-smtp-relay-jar-with-dependencies.jar # run the actual tests
+      - run:
+          name: copy deb file to simple name
+          command: cp target/aws-smtp-relay_*_all.deb  aws-smtp-relay_all.deb      # run the actual tests
+
+      - store_test_results: # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard. 
+      # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
+          path: target/surefire-reports
+      - store_test_results:
+          path: target/failsafe-reports
+
+      - store_artifacts:
+          path: target/dependency-check-report.html
+          when: always
+      - store_artifacts: # store the uberjar as an artifact
+          path: target/aws-smtp-relay.jar
+      - store_artifacts: # store the uberjar as an artifact
+          path: target/aws-smtp-relay_all.deb
