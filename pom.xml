@@ -27,6 +27,11 @@
                 <artifactId>subethasmtp</artifactId>
                 <version>4.0.1</version>
             </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.9.10</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -34,6 +39,10 @@
         <dependency>
             <groupId>com.github.davidmoten</groupId>
             <artifactId>subethasmtp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
@@ -80,7 +89,7 @@
         </resources>
         <plugins>
             <plugin>
-                <groupId>org.owasp</groupId><artifactId>dependency-check-maven</artifactId><version>5.0.0-M2</version>
+                <groupId>org.owasp</groupId><artifactId>dependency-check-maven</artifactId><version>5.2.2</version>
                 <configuration>
                     <suppressionFile>${project.basedir}/src/main/config/owasp-dependency-checker-suppressions.xml</suppressionFile>
                     <failBuildOnCVSS>4</failBuildOnCVSS>
