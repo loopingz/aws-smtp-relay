@@ -1,74 +1,25 @@
 package com.loopingz;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
 
-import org.apache.commons.cli.*;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.subethamail.smtp.helper.SimpleMessageListener;
-import org.subethamail.smtp.server.SMTPServer;
 
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
-import com.amazonaws.services.simpleemail.model.AmazonSimpleEmailServiceException;
-import com.amazonaws.services.simpleemail.model.RawMessage;
-import com.amazonaws.services.simpleemail.model.SendRawEmailRequest;
-
-public class AwsSmtpRelay implements SimpleMessageListener {
+public final class AwsSmtpRelay {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static CommandLine cmd;
     private static DeliveryDetails deliveryDetails = new DeliveryDetails();
 
-    AwsSmtpRelay() {
-    }
-
-    @Override
-    public boolean accept(String from, String to) {
-        return true;
-    }
-
-    @Override
-    public void deliver(String from, String to, InputStream inputStream) throws IOException {
-        AmazonSimpleEmailService client;
-        if (deliveryDetails.hasRegion()) {
-            client = AmazonSimpleEmailServiceClientBuilder.standard().withRegion(deliveryDetails.getRegion()).build();
-        } else {
-            client = AmazonSimpleEmailServiceClientBuilder.standard().build();
-        }
-        byte[] msg = IOUtils.toByteArray(inputStream);
-        RawMessage rawMessage =
-                new RawMessage(ByteBuffer.wrap(msg));
-        SendRawEmailRequest rawEmailRequest =
-                new SendRawEmailRequest(rawMessage).withSource(from)
-                                                   .withDestinations(to);
-        if (deliveryDetails.hasSourceArn()) {
-            rawEmailRequest = rawEmailRequest.withSourceArn(deliveryDetails.getSourceArn());
-        }
-        if (deliveryDetails.hasConfiguration()) {
-            rawEmailRequest = rawEmailRequest.withConfigurationSetName(deliveryDetails.getConfiguration());
-        }
-        try {
-            client.sendRawEmail(rawEmailRequest);
-        } catch (AmazonSimpleEmailServiceException e) {
-            throw new IOException(e.getMessage(), e);
-        }
-    }
-
-    void run() throws UnknownHostException {
-        SMTPServer.Builder builder = new SMTPServer.Builder();
-        builder.bindAddress(InetAddress.getByName(deliveryDetails.getBindAddress()))
-            .port(deliveryDetails.getPort())
-            .simpleMessageListener(this);
-        SMTPServer smtpServer = builder.build();
-        smtpServer.start();
+    private AwsSmtpRelay() {
     }
 
     private static void getCmdConfig() {
@@ -86,6 +37,12 @@ public class AwsSmtpRelay implements SimpleMessageListener {
         }
         if (cmd.hasOption("c")) {
             deliveryDetails.setConfiguration(cmd.getOptionValue("c"));
+        }
+        if (cmd.hasOption("f")) {
+            deliveryDetails.setFromArn(cmd.getOptionValue("f"));
+        }
+        if (cmd.hasOption("t")) {
+            deliveryDetails.setReturnPathArn(cmd.getOptionValue("t"));
         }
         if (cmd.hasOption("smtpO")) {
             deliveryDetails.setSmtpOverride(cmd.getOptionValue("smtpO"));
@@ -110,12 +67,15 @@ public class AwsSmtpRelay implements SimpleMessageListener {
         Options options = new Options();
         options.addOption("ssm", "ssmEnable", false, "Use SSM Parameter Store to get configuration");
         options.addOption("ssmP", "ssmPrefix", true, "SSM prefix to find variables default is /smtpRelay");
+        options.addOption("ssmR", "ssmRefresh", true, "SSM refresh rate to reload parameter");
 
         options.addOption("p", "port", true, "Port number to listen to");
         options.addOption("b", "bindAddress", true, "Address to listen to");
         options.addOption("r", "region", true, "AWS region to use");
         options.addOption("c", "configuration", true, "AWS SES configuration to use");
         options.addOption("a", "sourceArn", true, "AWS ARN of the sending authorization policy");
+        options.addOption("f", "fromArn", true, "AWS From ARN of the sending authorization policy");
+        options.addOption("t", "returnPathArn", true, "AWS Return Path ARN of the sending authorization policy");
 
         options.addOption("smtpO", "smtpOverride", true, "Not use SES but set SMTP variables true/false");
         options.addOption("smtpH", "smtpHost", true, "SMTP variable Host");
@@ -137,16 +97,16 @@ public class AwsSmtpRelay implements SimpleMessageListener {
             getCmdConfig();
             //get configuration
             if (cmd.hasOption("ssm")) {
-                deliveryDetails = new SsmConfigCollection(cmd, deliveryDetails).getConfig();
+                SsmConfigCollection collector = new SsmConfigCollection(cmd, deliveryDetails);
+                collector.updateConfig();
+                collector.run();
             }
 
             //select sender (ses or other)
             if (deliveryDetails.isSmtpOverride()) {
-                BasicSmtpRelay server = new BasicSmtpRelay(deliveryDetails);
-                server.run();
+                SmtpRelay.init(new BasicSmtpRelay(deliveryDetails));
             } else {
-                AwsSmtpRelay server = new AwsSmtpRelay();
-                server.run();
+                SmtpRelay.init(new SesSmtpRelay(deliveryDetails));
             }
         } catch (ParseException ex) {
             LOG.error(ex.getMessage(), ex);
