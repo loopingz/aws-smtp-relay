@@ -22,66 +22,71 @@ public final class AwsSmtpRelay {
   private static CommandLine cmd;
   private static DeliveryDetails deliveryDetails = new DeliveryDetails();
 
-  private static void getCmdConfig() {
-    if (cmd.hasOption("b")) {
-      deliveryDetails.setBindAddress(cmd.getOptionValue("b"));
+    private static void getCmdConfig() {
+        if (cmd.hasOption(Params.BIND_ADDRESS.key())) {
+            deliveryDetails.setBindAddress(cmd.getOptionValue(Params.BIND_ADDRESS.key()));
+        }
+        if (cmd.hasOption(Params.PORT.key())) {
+            deliveryDetails.setPort(cmd.getOptionValue(Params.PORT.key()));
+        }
+        if (cmd.hasOption(Params.REGION.key())) {
+            deliveryDetails.setRegion(cmd.getOptionValue(Params.REGION.key()));
+        }
+        if (cmd.hasOption(Params.SOURCE_ARN.key())) {
+            deliveryDetails.setSourceArn(cmd.getOptionValue(Params.SOURCE_ARN.key()));
+        }
+        if (cmd.hasOption(Params.CONFIGURATION.key())) {
+            deliveryDetails.setConfiguration(cmd.getOptionValue(Params.CONFIGURATION.key()));
+        }
+        if (cmd.hasOption(Params.FROM_ARN.key())) {
+            deliveryDetails.setFromArn(cmd.getOptionValue(Params.FROM_ARN.key()));
+        }
+        if (cmd.hasOption(Params.RETURN_PATH_ARN.key())) {
+            deliveryDetails.setReturnPathArn(cmd.getOptionValue(Params.RETURN_PATH_ARN.key()));
+        }
+        if (cmd.hasOption(Params.SMTP_OVERRIDE.key())) {
+            deliveryDetails.setSmtpOverride(cmd.getOptionValue(Params.SMTP_OVERRIDE.key()));
+        }
+        setSmtpDirectCreds();
     }
-    if (cmd.hasOption("p")) {
-      deliveryDetails.setPort(cmd.getOptionValue("p"));
-    }
-    if (cmd.hasOption("r")) {
-      deliveryDetails.setRegion(cmd.getOptionValue("r"));
-    }
-    if (cmd.hasOption("a")) {
-      deliveryDetails.setSourceArn(cmd.getOptionValue("a"));
-    }
-    if (cmd.hasOption("c")) {
-      deliveryDetails.setConfiguration(cmd.getOptionValue("c"));
-    }
-    if (cmd.hasOption("f")) {
-      deliveryDetails.setFromArn(cmd.getOptionValue("f"));
-    }
-    if (cmd.hasOption("t")) {
-      deliveryDetails.setReturnPathArn(cmd.getOptionValue("t"));
-    }
-    if (cmd.hasOption("smtpO")) {
-      deliveryDetails.setSmtpOverride(cmd.getOptionValue("smtpO"));
-    }
-    if (deliveryDetails.isSmtpOverride()) {
-      if (cmd.hasOption("smtpH")) {
-        deliveryDetails.setSmtpHost(cmd.getOptionValue("smtpH"));
-      }
-      if (cmd.hasOption("smtpP")) {
-        deliveryDetails.setSmtpPort(cmd.getOptionValue("smtpP"));
-      }
-      if (cmd.hasOption("smtpU")) {
-        deliveryDetails.setSmtpUsername(cmd.getOptionValue("smtpU"));
-      }
-      if (cmd.hasOption("smtpPW")) {
-        deliveryDetails.setSmtpPassword(cmd.getOptionValue("smtpPW"));
-      }
+
+    private static void setSmtpDirectCreds() {
+        if (deliveryDetails.isSmtpOverride()) {
+            if (cmd.hasOption(Params.SMTP_HOST.key())) {
+                deliveryDetails.setSmtpHost(cmd.getOptionValue(Params.SMTP_HOST.key()));
+            }
+            if (cmd.hasOption(Params.SMTP_PORT.key())) {
+                deliveryDetails.setSmtpPort(cmd.getOptionValue(Params.SMTP_PORT.key()));
+            }
+            if (cmd.hasOption(Params.SMTP_USERNAME.key())) {
+                deliveryDetails.setSmtpUsername(cmd.getOptionValue(Params.SMTP_USERNAME.key()));
+            }
+            if (cmd.hasOption(Params.SMTP_PASSWORD.key())) {
+                deliveryDetails.setSmtpPassword(cmd.getOptionValue(Params.SMTP_PASSWORD.key()));
+            }
+        }
     }
   }
 
-  public static void main(String[] args) throws UnknownHostException {
-    Options options = new Options();
-    options.addOption("ssm", "ssmEnable", false, "Use SSM Parameter Store to get configuration");
-    options.addOption("ssmP", "ssmPrefix", true, "SSM prefix to find variables default is /smtpRelay");
-    options.addOption("ssmR", "ssmRefresh", true, "SSM refresh rate to reload parameter");
+    public static void main(String[] args) throws UnknownHostException {
+        Options options = new Options();
+        options.addOption(Params.SSM_ENABLE.key(), Params.SSM_ENABLE.toString(), false, "Use SSM Parameter Store to get configuration");
+        options.addOption(Params.SSM_PREFIX.key(), Params.SSM_PREFIX.toString(), true, "SSM prefix to find variables default is /smtpRelay");
+        options.addOption(Params.SSM_REFRESH.key(), Params.SSM_REFRESH.toString(), true, "SSM refresh rate to reload parameter in minutes");
 
-    options.addOption("p", "port", true, "Port number to listen to");
-    options.addOption("b", "bindAddress", true, "Address to listen to");
-    options.addOption("r", "region", true, "AWS region to use");
-    options.addOption("c", "configuration", true, "AWS SES configuration to use");
-    options.addOption("a", "sourceArn", true, "AWS Source ARN of the sending authorization policy");
-    options.addOption("f", "fromArn", true, "AWS From ARN of the sending authorization policy");
-    options.addOption("t", "returnPathArn", true, "AWS Return Path ARN of the sending authorization policy");
+        options.addOption(Params.PORT.key(), Params.PORT.toString(), true, "Port number to listen to");
+        options.addOption(Params.BIND_ADDRESS.key(), Params.BIND_ADDRESS.toString(), true, "Address to listen to");
+        options.addOption(Params.REGION.key(), Params.REGION.toString(), true, "AWS region to use");
+        options.addOption(Params.CONFIGURATION.key(), Params.CONFIGURATION.toString(), true, "AWS SES configuration to use");
+        options.addOption(Params.SOURCE_ARN.key(), Params.SOURCE_ARN.toString(), true, "AWS Source ARN of the sending authorization policy");
+        options.addOption(Params.FROM_ARN.key(), Params.FROM_ARN.toString(), true, "AWS From ARN of the sending authorization policy");
+        options.addOption(Params.RETURN_PATH_ARN.key(), Params.RETURN_PATH_ARN.toString(), true, "AWS Return Path ARN of the sending authorization policy");
 
-    options.addOption("smtpO", "smtpOverride", true, "Not use SES but set SMTP variables true/false");
-    options.addOption("smtpH", "smtpHost", true, "SMTP variable Host");
-    options.addOption("smtpP", "smtpPort", true, "SMTP variable Port");
-    options.addOption("smtpU", "smtpUsername", true, "SMTP variable Username");
-    options.addOption("smtpW", "smtpPassword", true, "SMTP variable password");
+        options.addOption(Params.SMTP_OVERRIDE.key(), Params.SMTP_OVERRIDE.toString(), true, "Not use SES but set SMTP variables t/f, true/false");
+        options.addOption(Params.SMTP_HOST.key(), Params.SMTP_HOST.toString(), true, "SMTP variable Host");
+        options.addOption(Params.SMTP_PORT.key(), Params.SMTP_PORT.toString(), true, "SMTP variable Port");
+        options.addOption(Params.SMTP_USERNAME.key(), Params.SMTP_USERNAME.toString(), true, "SMTP variable Username");
+        options.addOption(Params.SMTP_PASSWORD.key(), Params.SMTP_PASSWORD.toString(), true, "SMTP variable password");
 
     options.addOption("h", "help", false, "Display this help");
     try {
@@ -94,13 +99,13 @@ public final class AwsSmtpRelay {
         return;
       }
 
-      getCmdConfig();
-      // get configuration
-      if (cmd.hasOption("ssm")) {
-        SsmConfigCollection collector = new SsmConfigCollection(cmd, deliveryDetails);
-        collector.updateConfig();
-        collector.run();
-      }
+            getCmdConfig();
+            //get configuration
+            if (cmd.hasOption(Params.SSM_ENABLE.key())) {
+                SsmConfigCollection collector = new SsmConfigCollection(cmd, deliveryDetails);
+                collector.updateConfig();
+                collector.run();
+            }
 
       // select sender (ses or other)
       if (deliveryDetails.isSmtpOverride()) {

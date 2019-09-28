@@ -43,24 +43,22 @@ java -jar aws-smtp-relay.jar
 
 ```
 usage: aws-smtp-relay
- -a,--sourceArn <arg>           AWS Source ARN of the sending authorization policy
- -f,--fromArn <arg>             AWS From ARN of the sending authorization policy
- -t,--returnPathArn <arg>       AWS Return Path ARN of the sending authorization policy
- -b,--bindAddress <arg>         Address to listen to
- -c,--configuration <arg>       AWS SES configuration to use
- -h,--help                      Display this help
- -p,--port <arg>                Port number to listen to
- -r,--region <arg>              AWS region to use
- -smtpH,--smtpHost <arg>        SMTP variable Host
- -smtpO,--smtpOverride <arg>    Not use SES but set SMTP variables
-                                true/false
- -smtpP,--smtpPort <arg>        SMTP variable Port
- -smtpPW,--smtpPassword <arg>   SMTP variable password
- -smtpU,--smtpUsername <arg>    SMTP variable Username
- -ssm,--ssmEnable               Use SSM to get configuration
- -ssmP,--ssmPrefix <arg>        SSM prefix to find variables default is
-                                /smtpRelay
-
+ -a,--sourceArn <arg>          AWS Source ARN of the sending authorization policy
+ -b,--bindAddress <arg>        Address to listen to
+ -c,--configuration <arg>      AWS SES configuration to use
+ -f,--fromArn <arg>            AWS From ARN of the sending authorization policy
+ -p,--port <arg>               Port number to listen to
+ -r,--region <arg>             AWS region to use
+ -smtpH,--smtpHost <arg>       SMTP variable Host
+ -smtpO,--smtpOverride <arg>   Not use SES but set SMTP variables t/f true/false
+ -smtpP,--smtpPort <arg>       SMTP variable Port
+ -smtpU,--smtpUsername <arg>   SMTP variable Username
+ -smtpW,--smtpPassword <arg>   SMTP variable password
+ -ssm,--ssmEnable              Use SSM Parameter Store to get configuration
+ -ssmP,--ssmPrefix <arg>       SSM prefix to find variables default is /smtpRelay
+ -ssmR,--ssmRefresh <arg>      SSM refresh rate to reload parameter
+ -t,--returnPathArn <arg>      AWS Return Path ARN of the sending authorization policy
+ -h,--help                     Display this help
 ```
 "/smtpRelay" can be changed with -ssmP
 
@@ -71,9 +69,10 @@ https://ap-southeast-2.console.aws.amazon.com/systems-manager/parameters
 once setup, you can change the configuration by restarting the service or rebooting the ec2 instance
 
 ```
-                /smtpRelay/region
-                /smtpRelay/configuration
-                /smtpRelay/sourceArn
+                /smtpRelay/region 
+                /smtpRelay/configuration 
+                /smtpRelay/sourceArn 
+                /smtpRelay/fromArn
                 /smtpRelay/smtpOverride
                 /smtpRelay/smtpHost
                 /smtpRelay/smtpPort
@@ -81,7 +80,7 @@ once setup, you can change the configuration by restarting the service or reboot
                 /smtpRelay/smtpPassword
 ```
 
-"/smtpRelay" can be changed with -ssmP
+"/smtpRelay" can be changed with -ssmP/--ssmPrefix
 
 smtpOverride allows you to point it to a mail catcher such as [MailHog](https://github.com/mailhog/MailHog/) to disable outbound email
 
@@ -113,7 +112,7 @@ Use this IAM Policy JSON to allow sending emails.
 ## IAM Policy for SSM Paramater store access
 
 Use this IAM Policy JSON to allow SSM Paramater variables to be used instead of the command line
-Replace \$SSMKEY with KMS key arn for the alias aws/ssm i.e. arn:aws:kms:ap-southeast-2:111222333444:key/111111111-2222-3333-4444-555555555555
+Replace ```$SSMKEY``` with KMS key arn for the alias aws/ssm i.e. ```arn:aws:kms:ap-southeast-2:111222333444:key/111111111-2222-3333-4444-555555555555```
 
 ```
 {
@@ -149,3 +148,9 @@ Replace \$SSMKEY with KMS key arn for the alias aws/ssm i.e. arn:aws:kms:ap-sout
   ]
 }
 ```
+
+# Changelog
+
+* argument `````--smtpPW````` is now ```--smtpW```
+* SSM refresh rate to reload parameter added (```-ssmR,--ssmRefresh <arg>```)
+* AWS From ARN of the sending authorization policy added (```-f,--fromArn <arg>```)
