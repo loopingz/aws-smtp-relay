@@ -14,6 +14,9 @@ public class DeliveryDetails {
     private String configuration;
 
     private String sourceArn;
+    private String returnPathArn;
+
+    private String fromArn;
     private String smtpOverride;
     private String smtpHost;
     private String smtpPort;
@@ -122,5 +125,29 @@ public class DeliveryDetails {
 
     public void setSmtpPassword(String smtpPassword) {
         this.smtpPassword = smtpPassword;
+    }
+
+    public String getReturnPathArn() {
+        return returnPathArn;
+    }
+
+    public void setReturnPathArn(String returnPathArn) {
+        this.returnPathArn = returnPathArn;
+    }
+
+    public boolean hasReturnPathArn() {
+        return !StringUtils.isNullOrEmpty(returnPathArn);
+    }
+
+    public String getFromArn() {
+        return fromArn;
+    }
+
+    public void setFromArn(String fromArn) {
+        this.fromArn = fromArn;
+    }
+
+    public boolean hasFromArn() {
+        return !StringUtils.isNullOrEmpty(returnPathArn);
     }
 }
