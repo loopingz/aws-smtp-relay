@@ -16,15 +16,12 @@ jobs:
 
       - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed
           # Read about caching dependencies: https://circleci.
-          key: aws-smtp-relay-{{ checksum "pom.xml" }}
+          keys: 
+            - aws-smtp-relay-{{ checksum "pom.xml" }}
+            - aws-smtp-relay-
       
       - run: mvn dependency:go-offline # gets the project dependencies
       
-      - save_cache: # saves the project dependencies
-          paths:
-            - ~/.m2
-          key: aws-smtp-relay-{{ checksum "pom.xml" }}
-
       - run:
          name: Java version
          command: java -version
@@ -37,6 +34,12 @@ jobs:
       - run:
           name: mvn verify
           command: mvn verify # run the actual tests
+ 
+      - save_cache: # saves the project dependencies
+          paths:
+            - ~/.m2
+          key: aws-smtp-relay-{{ checksum "pom.xml" }}
+
       - run:
           name: copy jar to simple name
           command: cp target/aws-smtp-relay-*-jar-with-dependencies.jar aws-smtp-relay-jar-with-dependencies.jar # run the actual tests
