@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  aws-smtp-relay:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    networks:
+      - default
+    ports:
+      - 127.0.0.1:10025:10026
+    command:
+      - "--p=10026"
+#      - "--ssmEnable"
+#      - "--ssmPrefix=/config/smtpRelay"
+#      - "--help"
+

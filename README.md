@@ -19,6 +19,9 @@ Sending an email with Postfix relay looks like this :
 Sending an email with aws-smtp-relay looks like this :
 ![aws-smtp-relay Schema](https://raw.githubusercontent.com/loopingz/aws-smtp-relay/master/docs/aws-smtp-relay.png)
 
+## Docker
+Can be found at https://hub.docker.com/repository/docker/qldgovau/aws-smtp-relay/
+
 ## Compile
 
 Just run the maven project
