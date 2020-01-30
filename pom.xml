@@ -11,6 +11,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <dependency.skip>false</dependency.skip>
+	<pmd.version>6.21.0</pmd.version>
     </properties>
 
     <dependencyManagement>
@@ -137,12 +138,12 @@
                     <dependency>
                         <groupId>net.sourceforge.pmd</groupId>
                         <artifactId>pmd-core</artifactId>
-                        <version>6.21.0</version>
+                        <version>${pmd.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>net.sourceforge.pmd</groupId>
                         <artifactId>pmd-java</artifactId>
-                        <version>6.21.0</version>
+                        <version>${pmd.version}</version>
                     </dependency>
                 </dependencies>
                 <configuration>
