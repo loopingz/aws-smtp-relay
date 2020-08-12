@@ -5,14 +5,14 @@
 
     <groupId>com.loopingz</groupId>
     <artifactId>aws-smtp-relay</artifactId>
-    <version>1.3.0</version>
+    <version>1.4.0</version>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>com.amazonaws</groupId>
                 <artifactId>aws-java-sdk-bom</artifactId>
-                <version>1.11.449</version>
+                <version>1.11.838</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -34,12 +34,12 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-dynamodb</artifactId>
-            <version>1.11.564</version>
+            <version>1.11.838</version>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-ses</artifactId>
-            <version>1.11.564</version>
+            <version>1.11.838</version>
         </dependency>
         <dependency>
             <groupId>com.sun.mail</groupId>
