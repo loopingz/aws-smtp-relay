@@ -1,3 +1,5 @@
+> FORKED from loopingz/aws-smtp-relay
+
 # aws-smtp-relay
 ![logo](https://raw.githubusercontent.com/8llouch/aws-smtp-relay/master/docs/aws-smtp-relay-logo.png)
 
