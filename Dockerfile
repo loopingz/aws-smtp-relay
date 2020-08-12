@@ -1,7 +1,7 @@
 FROM openjdk:jre-alpine
-MAINTAINER Damien Metzler <dmetzler@nuxeo.com>
-MAINTAINER Remi Cattiau <remi@cattiau.com>
-MAINTAINER Morgan Christiansson <docker@mog.se>
+LABEL maintainer="Damien Metzler <dmetzler@nuxeo.com>"
+LABEL maintainer="Remi Cattiau <remi@cattiau.com>"
+LABEL maintainer="Morgan Christiansson <docker@mog.se>"
 
 ADD target/*-jar-with-dependencies.jar /usr/share/aws-smtp-relay/aws-smtp-relay.jar
 
