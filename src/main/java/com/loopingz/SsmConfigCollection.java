@@ -37,23 +37,22 @@ public class SsmConfigCollection {
         this.deliveryDetails = deliveryDetails;
         timer = new Timer();
     }
-  }
 
-  public boolean updateConfig() {
-    return this.updateConfig(deliveryDetails);
-  }
+    public boolean updateConfig() {
+        return this.updateConfig(deliveryDetails);
+    }
 
-  public boolean updateConfig(DeliveryDetails deliveryDetails) {
-    boolean result = false;
-    try {
-      AWSCredentialsProvider credentials = InstanceProfileCredentialsProvider.getInstance();
-      AWSSimpleSystemsManagement simpleSystemsManagementClient = AWSSimpleSystemsManagementClientBuilder.standard()
-          .withCredentials(credentials).withRegion(Regions.getCurrentRegion().getName()).build();
+    public boolean updateConfig(DeliveryDetails deliveryDetails) {
+        boolean result = false;
+        try {
+            AWSCredentialsProvider credentials = InstanceProfileCredentialsProvider.getInstance();
+            AWSSimpleSystemsManagement simpleSystemsManagementClient = AWSSimpleSystemsManagementClientBuilder.standard()
+                .withCredentials(credentials).withRegion(Regions.getCurrentRegion().getName()).build();
 
-      GetParametersByPathRequest parameterRequest = new GetParametersByPathRequest();
-      parameterRequest.withPath(prefix).withRecursive(true).setWithDecryption(true);
-      GetParametersByPathResult parameterResult = simpleSystemsManagementClient.getParametersByPath(parameterRequest);
-      LOG.trace("length is: " + parameterResult.getParameters().size());
+            GetParametersByPathRequest parameterRequest = new GetParametersByPathRequest();
+            parameterRequest.withPath(prefix).withRecursive(true).setWithDecryption(true);
+            GetParametersByPathResult parameterResult = simpleSystemsManagementClient.getParametersByPath(parameterRequest);
+            LOG.trace("length is: " + parameterResult.getParameters().size());
 
             for (Parameter param : parameterResult.getParameters()) {
                 String key = param.getName();
@@ -66,8 +65,8 @@ public class SsmConfigCollection {
             AWSSimpleSystemsManagementException e) {
             throw new IllegalArgumentException("Failed to pass SSM arguments", e);
         }
-      }
-    } catch (
+        return result;
+    }
 
     private boolean setProperty(DeliveryDetails deliveryDetails, boolean inResult, String key, String value) {
         boolean result = inResult;
@@ -121,33 +120,12 @@ public class SsmConfigCollection {
             }
         }, interval, interval);
     }
-    return result;
-  }
 
-  public void run() {
-    if (interval <= 0) {
-      return;
+    public String getPrefix() {
+        return prefix;
     }
-    // Should set timer
-    timer.scheduleAtFixedRate(new TimerTask() {
-      @Override
-      public void run() {
-        try {
-          if (updateConfig()) {
-            SmtpRelay.reload();
-          }
-        } catch (Exception e) {
-          LOG.error(e.getMessage());
-        }
-      }
-    }, interval, interval);
-  }
 
-  public String getPrefix() {
-    return prefix;
-  }
-
-  public void setPrefix(String prefix) {
-    this.prefix = prefix;
-  }
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
 }

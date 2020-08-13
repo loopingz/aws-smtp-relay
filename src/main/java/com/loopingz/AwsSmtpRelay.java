@@ -14,13 +14,13 @@ import org.slf4j.LoggerFactory;
 
 public final class AwsSmtpRelay {
 
-  private AwsSmtpRelay() {
-  }
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static CommandLine cmd;
+    private static DeliveryDetails deliveryDetails = new DeliveryDetails();
 
-  private static CommandLine cmd;
-  private static DeliveryDetails deliveryDetails = new DeliveryDetails();
+    private AwsSmtpRelay() {
+    }
 
     private static void getCmdConfig() {
         if (cmd.hasOption(Params.BIND_ADDRESS.key())) {
@@ -66,7 +66,6 @@ public final class AwsSmtpRelay {
             }
         }
     }
-  }
 
     public static void main(String[] args) throws UnknownHostException {
         Options options = new Options();
@@ -88,16 +87,16 @@ public final class AwsSmtpRelay {
         options.addOption(Params.SMTP_USERNAME.key(), Params.SMTP_USERNAME.toString(), true, "SMTP variable Username");
         options.addOption(Params.SMTP_PASSWORD.key(), Params.SMTP_PASSWORD.toString(), true, "SMTP variable password");
 
-    options.addOption("h", "help", false, "Display this help");
-    try {
-      CommandLineParser parser = new DefaultParser();
-      cmd = parser.parse(options, args);
-      if (cmd.hasOption("h")) {
-        HelpFormatter formatter = new HelpFormatter();
-        // Should display version here
-        formatter.printHelp("aws-smtp-relay", options);
-        return;
-      }
+        options.addOption("h", "help", false, "Display this help");
+        try {
+            CommandLineParser parser = new DefaultParser();
+            cmd = parser.parse(options, args);
+            if (cmd.hasOption("h")) {
+                HelpFormatter formatter = new HelpFormatter();
+                // Should display version here
+                formatter.printHelp("aws-smtp-relay", options);
+                return;
+            }
 
             getCmdConfig();
             //get configuration
@@ -107,14 +106,14 @@ public final class AwsSmtpRelay {
                 collector.run();
             }
 
-      // select sender (ses or other)
-      if (deliveryDetails.isSmtpOverride()) {
-        SmtpRelay.init(new BasicSmtpRelay(deliveryDetails));
-      } else {
-        SmtpRelay.init(new SesSmtpRelay(deliveryDetails));
-      }
-    } catch (ParseException ex) {
-      LOG.error(ex.getMessage(), ex);
+            //select sender (ses or other)
+            if (deliveryDetails.isSmtpOverride()) {
+                SmtpRelay.init(new BasicSmtpRelay(deliveryDetails));
+            } else {
+                SmtpRelay.init(new SesSmtpRelay(deliveryDetails));
+            }
+        } catch (ParseException ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
     }
-  }
 }

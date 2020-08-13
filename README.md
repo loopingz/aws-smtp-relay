@@ -1,8 +1,12 @@
 # aws-smtp-relay
 
-![logo](https://raw.githubusercontent.com/8llouch/aws-smtp-relay/master/docs/aws-smtp-relay-logo.png)
+![logo](https://raw.githubusercontent.com/loopingz/aws-smtp-relay/master/docs/aws-smtp-relay-logo.png)
 
-Current master: [![CircleCI](https://circleci.com/gh/qld-gov-au/aws-smtp-relay.svg?style=svg)](https://circleci.com/gh/qld-gov-au/aws-smtp-relay)
+Current master: 
+
+Circle CI: [![CircleCI](https://circleci.com/gh/loopingz/aws-smtp-relay.svg?style=svg)](https://circleci.com/gh/loopingz/aws-smtp-relay)
+
+Travis CI: [![TravisCI](https://travis-ci.org/loopingz/aws-smtp-relay.svg?branch=master)](https://travis-ci.org/github/loopingz/aws-smtp-relay)
 
 Local SMTP server that convert SMTP message to AWS SES API Call to allow you to use **AWS Role Instance**.
 

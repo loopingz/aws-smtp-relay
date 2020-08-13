@@ -13,12 +13,6 @@
         <dependency.skip>false</dependency.skip>
     </properties>
 
-    <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <dependency.skip>false</dependency.skip>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -102,12 +96,12 @@
             </plugin>
             <plugin>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.1</version>
                 <dependencies>
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>8.29</version>
+                        <version>8.35</version>
                     </dependency>
                 </dependencies>
                 <configuration>
