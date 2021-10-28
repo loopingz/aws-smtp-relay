@@ -13,6 +13,8 @@ public class DeliveryDetails {
   private String region;
   private String configuration;
 
+  private String authorizationLambda;
+
   private String sourceArn;
   private String returnPathArn;
 
@@ -148,5 +150,17 @@ public class DeliveryDetails {
 
   public boolean hasFromArn() {
     return !StringUtils.isNullOrEmpty(returnPathArn);
+  }
+
+  public String getAuthorizationLambda() {
+    return authorizationLambda;
+  }
+
+  public void setAuthorizationLambda(String authorizationLambda) {
+    this.authorizationLambda = authorizationLambda;
+  }
+
+  public boolean hasAuthorizationLambda() {
+    return !StringUtils.isNullOrEmpty(authorizationLambda);
   }
 }

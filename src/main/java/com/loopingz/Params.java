@@ -5,6 +5,9 @@ enum Params {
     PORT("p", "port"),
     BIND_ADDRESS("b", "bindAddress"),
 
+    // authorization configs
+    AUTHORIZATION_LAMBDA("al", "authorizationLambda"),
+
     //ses configs
     REGION("r", "region"),
     CONFIGURATION("c", "configuration"),

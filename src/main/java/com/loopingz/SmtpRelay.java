@@ -3,6 +3,9 @@ package com.loopingz;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import org.subethamail.smtp.auth.LoginAuthenticationHandlerFactory;
+import org.subethamail.smtp.auth.LoginFailedException;
+import org.subethamail.smtp.auth.UsernamePasswordValidator;
 import org.subethamail.smtp.helper.SimpleMessageListener;
 import org.subethamail.smtp.server.SMTPServer;
 
@@ -47,6 +50,16 @@ public abstract class SmtpRelay implements SimpleMessageListener {
     SMTPServer.Builder builder = new SMTPServer.Builder();
     builder.bindAddress(InetAddress.getByName(deliveryDetails.getBindAddress())).port(deliveryDetails.getPort())
         .simpleMessageListener(this);
+
+    if (deliveryDetails.hasAuthorizationLambda()) {
+      UsernamePasswordValidator validator = (name, password) -> {
+        if (!"gregy\n".equalsIgnoreCase(name)) {
+          throw new LoginFailedException();
+        }
+      };
+      builder.requireAuth(true).authenticationHandlerFactory(new LoginAuthenticationHandlerFactory(validator));
+    }
+
     smtpServer = builder.build();
     smtpServer.start();
   }
