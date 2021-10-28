@@ -53,7 +53,7 @@ public abstract class SmtpRelay implements SimpleMessageListener {
 
     if (deliveryDetails.hasAuthorizationLambda()) {
       UsernamePasswordValidator validator = (name, password) -> {
-        if (!"gregy\n".equalsIgnoreCase(name)) {
+        if (!"\n".equalsIgnoreCase(name) || !"\n".equalsIgnoreCase(password)) {
           throw new LoginFailedException();
         }
       };
