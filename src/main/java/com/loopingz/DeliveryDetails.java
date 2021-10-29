@@ -13,7 +13,7 @@ public class DeliveryDetails {
   private String region;
   private String configuration;
 
-  private String authorizationLambda;
+  private String authenticationLambda;
 
   private String sourceArn;
   private String returnPathArn;
@@ -152,15 +152,15 @@ public class DeliveryDetails {
     return !StringUtils.isNullOrEmpty(returnPathArn);
   }
 
-  public String getAuthorizationLambda() {
-    return authorizationLambda;
+  public String getAuthenticationLambda() {
+    return authenticationLambda;
   }
 
-  public void setAuthorizationLambda(String authorizationLambda) {
-    this.authorizationLambda = authorizationLambda;
+  public void setAuthenticationLambda(String authenticationLambda) {
+    this.authenticationLambda = authenticationLambda;
   }
 
-  public boolean hasAuthorizationLambda() {
-    return !StringUtils.isNullOrEmpty(authorizationLambda);
+  public boolean hasAuthenticationLambda() {
+    return !StringUtils.isNullOrEmpty(authenticationLambda);
   }
 }

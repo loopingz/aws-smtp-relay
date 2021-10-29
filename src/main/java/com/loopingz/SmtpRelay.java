@@ -51,9 +51,10 @@ public abstract class SmtpRelay implements SimpleMessageListener {
     builder.bindAddress(InetAddress.getByName(deliveryDetails.getBindAddress())).port(deliveryDetails.getPort())
         .simpleMessageListener(this);
 
-    if (deliveryDetails.hasAuthorizationLambda()) {
+    if (deliveryDetails.hasAuthenticationLambda()) {
+      AuthenticationLambda authenticator = new AuthenticationLambda(deliveryDetails);
       UsernamePasswordValidator validator = (name, password) -> {
-        if (!"\n".equalsIgnoreCase(name) || !"\n".equalsIgnoreCase(password)) {
+        if (!authenticator.authenticate(name, password)) {
           throw new LoginFailedException();
         }
       };

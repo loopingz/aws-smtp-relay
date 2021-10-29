@@ -6,7 +6,7 @@ enum Params {
     BIND_ADDRESS("b", "bindAddress"),
 
     // authorization configs
-    AUTHORIZATION_LAMBDA("al", "authorizationLambda"),
+    AUTHENTICATION_LAMBDA("al", "authenticationLambda"),
 
     //ses configs
     REGION("r", "region"),
