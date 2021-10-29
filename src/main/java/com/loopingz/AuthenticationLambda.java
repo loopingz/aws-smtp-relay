@@ -12,18 +12,18 @@ public class AuthenticationLambda {
     protected DeliveryDetails deliveryDetails;
     AWSLambda client;
 
-    private class EmailPassword {
-        public String email;
+    private class NamePassword {
+        public String name;
         public String password;
 
-        EmailPassword(String email, String password) {
-            this.email = email;
+        NamePassword(String name, String password) {
+            this.name = name;
             this.password = password;
         }
 
         public String toJSON() {
             return "{" +
-                    "\"email\":\"" + email + "\"," +
+                    "\"name\":\"" + name + "\"," +
                     "\"password\":\"" + password + "\"" +
                     "}";
         }
@@ -43,8 +43,8 @@ public class AuthenticationLambda {
     }
 
     public boolean authenticate(String email, String password) {
-        EmailPassword emailPassword = new EmailPassword(email, password);
-        String payload = emailPassword.toJSON();
+        NamePassword namePassword = new NamePassword(email, password);
+        String payload = namePassword.toJSON();
 
         // (4) Create an InvokeRequest with required parameters
         InvokeRequest req = new InvokeRequest()
