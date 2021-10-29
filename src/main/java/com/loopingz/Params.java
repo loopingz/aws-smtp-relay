@@ -5,15 +5,15 @@ enum Params {
     PORT("p", "port"),
     BIND_ADDRESS("b", "bindAddress"),
 
-    // authorization configs
-    AUTHENTICATION_LAMBDA("al", "authenticationLambda"),
-
     //ses configs
     REGION("r", "region"),
     CONFIGURATION("c", "configuration"),
     SOURCE_ARN("a", "sourceArn"),
     FROM_ARN("f", "fromArn"),
     RETURN_PATH_ARN("t", "returnPathArn"),
+
+    // authorization configs
+    AUTHENTICATION_LAMBDA("al", "authLambda"),
 
     //ssm configs
     SSM_ENABLE("ssm", "ssmEnable"), //use SSM for values

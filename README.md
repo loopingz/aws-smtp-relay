@@ -53,6 +53,7 @@ usage: aws-smtp-relay
  -f,--fromArn <arg>            AWS From ARN of the sending authorization policy
  -p,--port <arg>               Port number to listen to
  -r,--region <arg>             AWS region to use
+ -al --authLambda <arg>        Name of AWS Lambda to invoke for authentication
  -smtpH,--smtpHost <arg>       SMTP variable Host
  -smtpO,--smtpOverride <arg>   Not use SES but set SMTP variables t/f true/false
  -smtpP,--smtpPort <arg>       SMTP variable Port
