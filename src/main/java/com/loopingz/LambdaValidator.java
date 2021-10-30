@@ -5,10 +5,12 @@ import com.amazonaws.services.lambda.AWSLambda;
 import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
 import com.amazonaws.services.lambda.model.InvokeRequest;
 import com.amazonaws.services.lambda.model.InvokeResult;
+import org.subethamail.smtp.auth.LoginFailedException;
+import org.subethamail.smtp.auth.UsernamePasswordValidator;
 
 import java.nio.charset.StandardCharsets;
 
-public class AuthenticationLambda {
+public class LambdaValidator implements UsernamePasswordValidator {
     protected DeliveryDetails deliveryDetails;
     AWSLambda client;
 
@@ -29,7 +31,7 @@ public class AuthenticationLambda {
         }
     }
 
-    AuthenticationLambda(DeliveryDetails deliveryDetails) {
+    LambdaValidator(DeliveryDetails deliveryDetails) {
         this.deliveryDetails = deliveryDetails;
 
         // (1) Define the AWS Region in which the function is to be invoked
@@ -42,8 +44,8 @@ public class AuthenticationLambda {
         this.client = builder.build();
     }
 
-    public boolean authenticate(String email, String password) {
-        NamePassword namePassword = new NamePassword(email, password);
+    public void login(final String username, final String password) throws LoginFailedException {
+        NamePassword namePassword = new NamePassword(username, password);
         String payload = namePassword.toJSON();
 
         // (4) Create an InvokeRequest with required parameters
@@ -55,12 +57,9 @@ public class AuthenticationLambda {
         InvokeResult result = client.invoke(req);
 
         // (6) Handle result
-        try {
-            String response = new String(result.getPayload().array(), StandardCharsets.UTF_8);
-            return "\"OK\"".equals(response);
-        }
-        catch (Exception e) {
-            return false;
+        String response = new String(result.getPayload().array(), StandardCharsets.UTF_8);
+        if (!"\"OK\"".equals(response)) {
+            throw new LoginFailedException();
         }
     }
 }
