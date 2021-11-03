@@ -12,11 +12,11 @@ import java.nio.charset.StandardCharsets;
 
 public class LambdaValidator implements UsernamePasswordValidator {
     protected DeliveryDetails deliveryDetails;
-    AWSLambda client;
+    private final AWSLambda client;
 
-    private class NamePassword {
-        public String name;
-        public String password;
+    private static class NamePassword {
+        private String name;
+        private String password;
 
         NamePassword(String name, String password) {
             this.name = name;
@@ -24,10 +24,11 @@ public class LambdaValidator implements UsernamePasswordValidator {
         }
 
         public String toJSON() {
-            return "{" +
-                    "\"name\":\"" + name + "\"," +
-                    "\"password\":\"" + password + "\"" +
-                    "}";
+            // There is probably a generic way of turning this into JSON (perhaps using Gson?)
+            return "{"
+                   + "\"name\":\"" + name + "\","
+                   + "\"password\":\"" + password + "\""
+                   + "}";
         }
     }
 
