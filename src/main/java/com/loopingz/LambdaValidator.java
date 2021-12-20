@@ -5,12 +5,18 @@ import com.amazonaws.services.lambda.AWSLambda;
 import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
 import com.amazonaws.services.lambda.model.InvokeRequest;
 import com.amazonaws.services.lambda.model.InvokeResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.subethamail.smtp.auth.LoginFailedException;
 import org.subethamail.smtp.auth.UsernamePasswordValidator;
 
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 
 public class LambdaValidator implements UsernamePasswordValidator {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
     protected DeliveryDetails deliveryDetails;
     private final AWSLambda client;
 
@@ -59,7 +65,10 @@ public class LambdaValidator implements UsernamePasswordValidator {
 
         // (6) Handle result
         String response = new String(result.getPayload().array(), StandardCharsets.UTF_8);
-        if (!"\"OK\"".equals(response)) {
+        if ("\"OK\"".equals(response)) {
+            LOG.info("{} is authorized", username);
+        } else {
+            LOG.info("{} is not authorized", username);
             throw new LoginFailedException();
         }
     }
