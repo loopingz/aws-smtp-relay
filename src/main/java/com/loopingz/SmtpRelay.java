@@ -51,6 +51,7 @@ public abstract class SmtpRelay implements SimpleMessageListener {
 
     if (deliveryDetails.hasAuthenticationLambda()) {
       builder.requireAuth(true).authenticationHandlerFactory(new LoginAuthenticationHandlerFactory(new LambdaValidator(deliveryDetails)));
+      builder.enableTLS();
     }
 
     smtpServer = builder.build();
