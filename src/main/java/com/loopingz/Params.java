@@ -12,6 +12,9 @@ enum Params {
     FROM_ARN("f", "fromArn"),
     RETURN_PATH_ARN("t", "returnPathArn"),
 
+    // authorization configs
+    AUTHENTICATION_LAMBDA("al", "authLambda"),
+
     //ssm configs
     SSM_ENABLE("ssm", "ssmEnable"), //use SSM for values
     SSM_PREFIX("ssmP", "ssmPrefix"),

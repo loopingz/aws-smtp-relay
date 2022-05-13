@@ -47,6 +47,9 @@ public final class AwsSmtpRelay {
         if (cmd.hasOption(Params.SMTP_OVERRIDE.key())) {
             deliveryDetails.setSmtpOverride(cmd.getOptionValue(Params.SMTP_OVERRIDE.key()));
         }
+        if (cmd.hasOption(Params.AUTHENTICATION_LAMBDA.key())) {
+            deliveryDetails.setAuthenticationLambda(cmd.getOptionValue(Params.AUTHENTICATION_LAMBDA.key()));
+        }
         setSmtpDirectCreds();
     }
 
@@ -72,6 +75,8 @@ public final class AwsSmtpRelay {
         options.addOption(Params.SSM_ENABLE.key(), Params.SSM_ENABLE.toString(), false, "Use SSM Parameter Store to get configuration");
         options.addOption(Params.SSM_PREFIX.key(), Params.SSM_PREFIX.toString(), true, "SSM prefix to find variables default is /smtpRelay");
         options.addOption(Params.SSM_REFRESH.key(), Params.SSM_REFRESH.toString(), true, "SSM refresh rate to reload parameter in minutes");
+
+        options.addOption(Params.AUTHENTICATION_LAMBDA.key(), Params.AUTHENTICATION_LAMBDA.toString(), true, "Call this Lambda to check user credentials");
 
         options.addOption(Params.PORT.key(), Params.PORT.toString(), true, "Port number to listen to");
         options.addOption(Params.BIND_ADDRESS.key(), Params.BIND_ADDRESS.toString(), true, "Address to listen to");
