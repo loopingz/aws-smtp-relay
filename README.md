@@ -1,5 +1,8 @@
 # aws-smtp-relay
 
+[DEPRECATED] I moved to this project instead: https://github.com/loopingz/smtp-relay
+It should have similar features with more flexibility, please create issue on the new project
+
 ![logo](https://raw.githubusercontent.com/loopingz/aws-smtp-relay/master/docs/aws-smtp-relay-logo.png)
 
 Current master: 
