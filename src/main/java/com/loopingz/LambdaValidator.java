@@ -51,6 +51,7 @@ public class LambdaValidator implements UsernamePasswordValidator {
         this.client = builder.build();
     }
 
+    @Override
     public void login(final String username, final String password) throws LoginFailedException {
         NamePassword namePassword = new NamePassword(username, password);
         String payload = namePassword.toJSON();
